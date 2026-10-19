@@ -165,3 +165,96 @@ GitHub Pages.
 
 ~0.35s pause between paged requests, 2 attempts per request, hard caps on
 pages fetched. Read-only — it never places orders or touches accounts.
+
+## Sports: prediction markets vs sportsbooks
+
+`sports_compare.py` — the flagship sports feature. Compares Polymarket and
+Kalshi moneyline prices against vig-free sportsbook consensus for the same
+games and flags divergences. Informational only — not betting advice.
+
+```bash
+# free Odds API key in env (get one at https://the-odds-api.com — free tier)
+export ODDS_API_KEY=your_key_here
+python3 sports_compare.py --leagues nfl,nba --threshold 0.03 --html
+python3 sports_compare.py --leagues nfl --json > sports.json
+python3 sports_compare.py --fixture-test   # no-network logic test
+```
+
+### Setup: The Odds API key
+
+1. Sign up at https://the-odds-api.com (free tier: 500 credits/month —
+   roughly 16 requests/day; free tier covers NFL/NBA/MLB h2h markets).
+2. `export ODDS_API_KEY=<key>` locally, or add it as the `ODDS_API_KEY`
+   Actions secret on the repo (already done on
+   `UnqualifiedCMG/prediction-screener`).
+3. The script reads the key from the environment only — it is never
+   hardcoded or written to any file.
+
+Without a key, everything else still runs (Polymarket, Kalshi, ESPN,
+weather) — only the sportsbook consensus column is skipped.
+
+### Free data sources integrated
+
+| Source | What it provides | Key? |
+|--------|------------------|------|
+| Polymarket gamma API | Moneyline prices per game (public-search) | No |
+| Kalshi trade API | Game markets (`KXNFLGAME` etc.), mids from orderbook | No |
+| The Odds API | US sportsbook h2h moneylines | Free key |
+| ESPN unofficial API | Schedules, records, venues, injuries | No |
+| Open-Meteo | Weather at kickoff for outdoor NFL games | No |
+
+Odds API responses are cached 12h (≤2 refreshes/day ≈ 90 credits/month).
+Quota headers are read on every call and a warning prints under 50 remaining.
+
+### Matching methodology
+
+- **Vig removal (basic normalization):** each book's American odds →
+  implied probability per side, then each side divided by the overround
+  (`p_home = raw_home / (raw_home + raw_away)`). Consensus = mean of the
+  de-vigged home-win probability across books.
+- **Team normalization:** one canonical table per league maps ESPN
+  abbreviations ↔ Odds API full names ↔ Polymarket short names ↔ Kalshi
+  ticker codes.
+- **Conservative matching:** a game is compared only when both teams
+  resolve through the table on every source. Ambiguous games are listed
+  as *unmatched* — never guessed.
+- **Polymarket lookup:** per-game events found via public-search
+  (`nfl-dal-phi-2026-10-27` style tickers); the moneyline is the market
+  whose question equals the event title with both team outcomes.
+
+### Scheduled refresh
+
+`.github/workflows/sports-refresh.yml` runs daily at 12:00 UTC: rebuilds
+`site/sports.html`, commits it (plus a dated JSON snapshot under
+`site/data/`) back to main, and GitHub Pages redeploys. ~3 API credits/day.
+
+### Phase-two options (not free — parked)
+
+- **Pinnacle / Betfair:** sharper books, but need funded accounts.
+- **Unabated:** pro-grade no-vig lines, paid.
+- **balldontlie.io:** NBA stats/history — now requires a (free) API key;
+  not integrated, would slot in as a second NBA context source.
+- **TheSportsDB:** free tier exists; ESPN already covers the need, kept
+  as a fallback if ESPN's unofficial API breaks.
+
+## Data page: everything by source
+
+`data_page.py` builds `site/data.html` — the "everything in one place"
+reference page. One tab per source, each with a one-line description, its
+limitations, a "data as of" timestamp, and the raw-ish tables:
+
+| Tab | Contents | Key needed? |
+|-----|----------|-------------|
+| ESPN | NFL/NBA schedules, records, venues, injury flags | No |
+| Polymarket | Top 50 open markets by volume | No |
+| Kalshi | Top 50 open markets by volume | No |
+| Sportsbooks | h2h moneylines by book (The Odds API) | Free key (`ODDS_API_KEY`) |
+| balldontlie | NBA stats placeholder | Free key (`BALLDONTLIE_API_KEY`) — not wired yet |
+| Open-Meteo | Kickoff weather for outdoor NFL games | No |
+
+```bash
+python3 data_page.py --html
+python3 data_page.py --refresh --html   # bypass caches
+```
+
+The daily Actions workflow rebuilds it alongside the sports page.
