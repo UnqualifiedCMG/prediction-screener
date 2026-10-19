@@ -1,0 +1,100 @@
+{
+ "nfl": {
+  "rows": [
+   {
+    "league": "NFL",
+    "away": "WAS",
+    "home": "SF",
+    "date": "2026-10-20 00:15",
+    "venue": "Levi's Stadium",
+    "status": "10/19 - 8:15 PM EDT",
+    "context": "WAS 1-3-1 @ SF 5-0 \u00b7 19 Q/D/Out inj: Javontae Jean-Baptiste (LB, Out); Charles Omenihu (DE, Out) \u00b7 62F, 0% precip, 11mph wind",
+    "poly_home": 0.785,
+    "poly_url": "https://polymarket.com/event/nfl-was-sf-2026-10-20",
+    "kalshi_home": 0.5029,
+    "books_home": 0.7765,
+    "n_books": 9,
+    "divs": {
+     "poly": 0.0085,
+     "kalshi": -0.2736
+    },
+    "max_div": 0.2736,
+    "flagged": true
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 1
+ },
+ "nba": {
+  "rows": [
+   {
+    "league": "NBA",
+    "away": "BOS",
+    "home": "DET",
+    "date": "2026-10-20 19:00",
+    "venue": "Little Caesars Arena",
+    "status": "10/20 - 3:00 PM EDT",
+    "context": "BOS 0-0 @ DET 0-0 \u00b7 1 Q/D/Out inj: Devin Carter (G, Out)",
+    "poly_home": 0.485,
+    "poly_url": "https://polymarket.com/event/nba-bos-det-2026-10-20",
+    "kalshi_home": 0.4999,
+    "books_home": 0.4968,
+    "n_books": 6,
+    "divs": {
+     "poly": -0.0118,
+     "kalshi": 0.0031
+    },
+    "max_div": 0.0118,
+    "flagged": false
+   },
+   {
+    "league": "NBA",
+    "away": "PHI",
+    "home": "NY",
+    "date": "2026-10-20 23:00",
+    "venue": "Madison Square Garden",
+    "status": "10/20 - 7:00 PM EDT",
+    "context": "PHI 0-0 @ NY 0-0 \u00b7 1 Q/D/Out inj: Ariel Hukporti (C, Out)",
+    "poly_home": 0.625,
+    "poly_url": "https://polymarket.com/event/nba-phi-nyk-2026-10-20",
+    "kalshi_home": null,
+    "books_home": 0.6263,
+    "n_books": 8,
+    "divs": {
+     "poly": -0.0013
+    },
+    "max_div": 0.0013,
+    "flagged": false
+   },
+   {
+    "league": "NBA",
+    "away": "OKC",
+    "home": "SA",
+    "date": "2026-10-21 01:30",
+    "venue": "Frost Bank Center",
+    "status": "10/20 - 9:30 PM EDT",
+    "context": "OKC 0-0 @ SA 0-0 \u00b7 2 Q/D/Out inj: Otega Oweh (G, Out); Jayden Quaintance (F, Out)",
+    "poly_home": 0.555,
+    "poly_url": "https://polymarket.com/event/nba-okc-sas-2026-10-20",
+    "kalshi_home": null,
+    "books_home": 0.5598,
+    "n_books": 8,
+    "divs": {
+     "poly": -0.0048
+    },
+    "max_div": 0.0048,
+    "flagged": false
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 3
+ },
+ "mlb": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ }
+}
