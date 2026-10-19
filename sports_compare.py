@@ -389,19 +389,33 @@ def game_coords(league, home_abbr, venue):
 
 
 def fetch_polymarket_game(league, away_short, home_short, refresh=False,
-                         away_full=None, home_full=None):
-    """Moneyline market for one game via public-search. Conservative match."""
+                         away_full=None, home_full=None, date_iso=None):
+    """Moneyline market for one game via public-search. Conservative match.
+
+    Prefers the event whose slug date matches the ET game date — search can
+    return stale/past games between the same teams (e.g. a resolved game
+    from two days ago).
+    """
     key = f"poly_{league}_{away_short}_{home_short}.json".replace(" ", "_")
     if not refresh:
         hit = cache_get(key, KALSHI_TTL)
         if hit is not None:
             return hit
     prefix = LEAGUES[league]["poly_prefix"]
+    et_date = None
+    try:
+        from zoneinfo import ZoneInfo
+        d = dt.datetime.fromisoformat((date_iso or "").replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=dt.timezone.utc)
+        et_date = d.astimezone(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
+    except Exception:
+        pass
     queries = [f"{away_short} vs. {home_short}", f"{home_short} vs. {away_short}"]
     if away_full and home_full:
         # API titles often use full names ("Cleveland Guardians vs. Tampa Bay Rays")
         queries += [f"{away_full} vs. {home_full}", f"{home_full} vs. {away_full}"]
-    result = None
+    candidates = []
     for query in queries:
         try:
             _, d = _get(POLY_SEARCH, {"q": query})
@@ -448,11 +462,19 @@ def fetch_polymarket_game(league, away_short, home_short, refresh=False,
                         "slug": ev.get("slug"),
                         "title": title,
                     }
+                    candidates.append(result)
                     break
-            if result:
-                break
-        if result:
-            break
+            # keep scanning other events/queries for a date-matching candidate
+        # end queries loop
+    result = None
+    if candidates:
+        if et_date:
+            for c in candidates:
+                if (c.get("slug") or "").endswith(et_date):
+                    result = c
+                    break
+        if result is None:
+            result = candidates[0]
     cache_set(key, result)
     return result
 
@@ -758,7 +780,8 @@ def compare_league(league, api_key, threshold, spread_threshold=1.0, refresh=Fal
         home_short = maps["abbr"][home][2]
 
         poly = fetch_polymarket_game(league, away_short, home_short, refresh,
-                                       maps["abbr"][away][1], maps["abbr"][home][1])
+                                       maps["abbr"][away][1], maps["abbr"][home][1],
+                                       g.get("date"))
         kal = match_kalshi_game(kalshi, maps, away, home) if ENABLE_KALSHI else None
         cons, n_books = book_consensus(odds_data, maps, away, home) if odds_data else (None, 0)
         avg_spread, book_spreads, n_spread_books = (
