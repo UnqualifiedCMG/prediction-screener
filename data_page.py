@@ -2,9 +2,12 @@
 """
 PolyScope "Data" page — everything we track, by source, in one place.
 
-One tab per source: ESPN, Polymarket, Kalshi, Sportsbooks (The Odds API),
+One tab per source: ESPN, Polymarket (sports), Sportsbooks (The Odds API),
 balldontlie, Open-Meteo. Each tab carries a one-line description, its
 limitations, a "data as of" timestamp, and the raw-ish tables.
+
+Kalshi is parked (screener.ENABLE_KALSHI = False) — no Kalshi tab until
+their API data improves.
 
 Usage:
     python3 data_page.py --html            # write site/data.html
@@ -34,7 +37,6 @@ TOP_N = 50
 TABS = [
     ("espn", "ESPN"),
     ("polymarket", "Polymarket"),
-    ("kalshi", "Kalshi"),
     ("sportsbooks", "Sportsbooks"),
     ("balldontlie", "balldontlie"),
     ("weather", "Open-Meteo"),
@@ -45,15 +47,13 @@ SOURCE_INFO = {
              "via ESPN's unofficial API.",
              "Unofficial and undocumented — can change or break without notice. "
              "Injury details are brief; statuses (Questionable/Out) are the reliable part."),
-    "polymarket": ("Open prediction markets with Yes prices, volume, and close dates.",
-                   "API lists only active markets (survivorship bias). Prices are "
-                   "Yes-token mids; thin markets can be stale or gamed."),
-    "kalshi": ("Open Kalshi markets with Yes mids from the orderbook.",
-               "No price-history API, so no movers screen. Near-term listings are "
-               "flooded with provisional sports-combo scaffolds (filtered here)."),
-    "sportsbooks": ("US sportsbook moneylines (h2h) via The Odds API, de-vigged "
-                    "into consensus probabilities.",
-                    "Free tier: 500 credits/month, NFL/NBA/MLB h2h only. Needs a free "
+    "polymarket": ("Open sports prediction markets with Yes prices, volume, and close dates.",
+                   "Sports only — the API's Sports tag decides; politics/crypto/culture "
+                   "are excluded. API lists only active markets (survivorship bias). "
+                   "Prices are Yes-token mids; thin markets can be stale or gamed."),
+    "sportsbooks": ("US sportsbook moneylines, spreads, and totals via The Odds API, "
+                    "de-vigged into consensus probabilities.",
+                    "Free tier: 500 credits/month, NFL/NBA/MLB only. Needs a free "
                     "API key. Odds move fast — this is a snapshot, not a live feed."),
     "balldontlie": ("NBA stats and history — team records, standings, game logs.",
                     "Requires a free API key (set BALLDONTLIE_API_KEY). Not yet "
@@ -92,6 +92,11 @@ def get_polymarket():
 
 
 def get_kalshi():
+    """DORMANT — Kalshi is parked (screener.ENABLE_KALSHI = False).
+
+    Kept intact so it can be re-enabled if Kalshi's API data improves.
+    Not called anywhere while the flag is off.
+    """
     mkts = screener.fetch_kalshi(max_markets=2000)
     recs = screener.normalize_kalshi(mkts)
     recs.sort(key=lambda r: r["volume"] or 0, reverse=True)
@@ -242,13 +247,13 @@ def render(data, stamps, path):
     nav = "".join(
         f'<a href="{h}">{l}</a>' for h, l in
         [("index.html", "Dashboard"), ("markets.html", "Markets"),
-         ("stats.html", "Stats"), ("sports.html", "Sports"),
-         ("data.html", "Data"), ("about.html", "About")])
+         ("backtests.html", "Backtests"), ("sports.html", "Sports"),
+         ("fantasy.html", "Fantasy"), ("data.html", "Data"),
+         ("about.html", "About")])
     tab_btns, tab_divs = [], []
     bodies = {
         "espn": tab_espn(data["espn"]),
         "polymarket": tab_markets(data["polymarket"], "poly"),
-        "kalshi": tab_markets(data["kalshi"], "kalshi"),
         "sportsbooks": tab_sportsbooks(data["sportsbooks"]),
         "balldontlie": tab_balldontlie(),
         "weather": tab_weather(data["weather"]),
@@ -297,13 +302,12 @@ function showTab(k) {{
 <div class="freshness">📡 Page generated {gen} · every tab stamped with its own data time ·
 free sources only · informational, not betting advice · 21+ · 1-800-GAMBLER</div>
 <h1>Data, by source</h1>
-<p class="lede">Everything PolyScope tracks, straight from each tap — no blending,
-no hiding. Each tab says what the source is and where it lies to you.</p>
 <div class="tabbar">{"".join(tab_btns)}</div>
 {"".join(tab_divs)}
 </main>
-<footer class="wrap"><p>Sources: ESPN · Polymarket · Kalshi · The Odds API ·
-balldontlie · Open-Meteo · <a href="about.html">Methodology</a></p></footer>
+<footer class="wrap"><p>Sources: ESPN · Polymarket (sports) · The Odds API ·
+balldontlie · Open-Meteo · <a href="about.html">Methodology</a></p>
+<p class="dim">Kalshi support is parked until their API data improves.</p></footer>
 </body></html>"""
     with open(path, "w") as f:
         f.write(page)
@@ -323,12 +327,10 @@ def main():
     print("pulling Polymarket…", file=sys.stderr)
     data["polymarket"], _ = cached("data_poly.json", DATA_TTL, get_polymarket)
     stamps["polymarket"] = NOW.strftime("%Y-%m-%d %H:%M UTC")
-    print("pulling Kalshi…", file=sys.stderr)
-    data["kalshi"], _ = cached("data_kalshi.json", DATA_TTL, get_kalshi)
-    stamps["kalshi"] = NOW.strftime("%Y-%m-%d %H:%M UTC")
     print("pulling sportsbooks…", file=sys.stderr)
     data["sportsbooks"], _ = cached("data_odds.json", sc.ODDS_TTL, get_sportsbooks)
     stamps["sportsbooks"] = NOW.strftime("%Y-%m-%d %H:%M UTC")
+    # Kalshi is parked — no fetch, no tab. get_kalshi() stays dormant above.
     print("pulling weather…", file=sys.stderr)
     data["weather"], _ = cached("data_wx.json", DATA_TTL, get_weather)
     stamps["weather"] = NOW.strftime("%Y-%m-%d %H:%M UTC")
