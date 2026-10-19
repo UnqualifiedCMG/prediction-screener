@@ -7,24 +7,23 @@
 <link rel="stylesheet" href="site/styles.css">
 </head>
 <body>
-<header class="site-header">
+<header class="site-header"><div class="wrap head-row">
+<a class="brand" href="index.html">◈ Poly<span>Scope</span></a>
+<nav><a href="site/index.html">Dashboard</a><a href="site/markets.html">Markets</a><a href="site/stats.html">Stats</a><a href="site/sports.html">Sports</a><a href="site/data.html">Data</a><a href="site/about.html">About</a></nav>
+</div></header>
+<main class="wrap">
   <h1>PolyScope</h1>
-  <p class="tagline">Live Polymarket &amp; Kalshi data, backtested. For research — not financial advice.</p>
-  <nav>
-    <a href="site/index.html">Dashboard</a>
-    <a href="site/markets.html">Markets</a>
-    <a href="site/stats.html">Backtest Stats</a>
-    <a href="site/about.html">Methodology</a>
-  </nav>
-</header>
-<main>
+  <p class="lede">Live Polymarket &amp; Kalshi data, backtested. For research — not financial advice.</p>
   <div class="cards">
+    <a class="card" href="site/sports.html"><h2>🏈 Sports vs Books</h2><span>Prediction-market moneylines vs vig-free sportsbook consensus — divergence leaderboard</span></a>
     <a class="card" href="site/index.html"><h2>Market Dashboard</h2><span>Top volume, biggest movers, closing soon, extremes watch, new listings</span></a>
     <a class="card" href="site/markets.html"><h2>Market Explorer</h2><span>Searchable, sortable — 2,000 most liquid open markets</span></a>
     <a class="card" href="site/stats.html"><h2>Backtest Stats</h2><span>Do 90¢ markets resolve? Conditional resolution rates, n=1,490</span></a>
+    <a class="card" href="site/data.html"><h2>🗄️ Data by Source</h2><span>Everything we track, tabbed by source — ESPN, Polymarket, Kalshi, books, weather</span></a>
     <a class="card" href="site/about.html"><h2>Methodology</h2><span>Data sources, limitations, honest caveats</span></a>
   </div>
+  <div class="notice">🔞 21+. Informational only — not betting advice. Gambling problem? Call 1-800-GAMBLER.</div>
 </main>
-<footer>Data: Polymarket &amp; Kalshi public APIs · Code: <a href="https://github.com/UnqualifiedCMG/prediction-screener">GitHub</a></footer>
+<footer class="wrap"><p>Data: Polymarket · Kalshi · The Odds API · ESPN · Open-Meteo · Code: <a href="https://github.com/UnqualifiedCMG/prediction-screener">GitHub</a></p></footer>
 </body>
 </html>
