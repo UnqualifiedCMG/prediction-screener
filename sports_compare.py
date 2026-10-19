@@ -434,7 +434,7 @@ def fetch_polymarket_game(league, away_short, home_short, refresh=False):
                     result = {
                         "price_home": ph,
                         "volume": ev.get("volume"),
-                        "url": f"https://polymarket.us/event/{ev.get('slug')}",
+                        "slug": ev.get("slug"),
                         "title": title,
                     }
                     break
@@ -693,6 +693,26 @@ def fmt_american(odds):
     return f"{odds:+d}"
 
 
+def poly_us_url(league, api_slug, date_iso):
+    """polymarket.us sports game URL.
+
+    Pattern is /sports/<league>/<slug> where the slug's trailing date is the
+    ET (not UTC) game date — the API slug uses the UTC date, so convert it.
+    """
+    base = re.sub(r"-\d{4}-\d{2}-\d{2}$", "", api_slug or "")
+    et_date = None
+    try:
+        from zoneinfo import ZoneInfo
+        d = dt.datetime.fromisoformat((date_iso or "").replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=dt.timezone.utc)
+        et_date = d.astimezone(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
+    except Exception:
+        pass
+    slug = f"{base}-{et_date}" if base and et_date else (api_slug or "")
+    return f"https://polymarket.us/sports/{league}/{slug}"
+
+
 def game_slug(league, away, home, date_iso):
     """Stable URL slug for a game: same game -> same URL across refreshes."""
     d = ""
@@ -768,7 +788,9 @@ def compare_league(league, api_key, threshold, spread_threshold=1.0, refresh=Fal
             "context": " · ".join(ctx) if ctx else None,
             "injuries": inj, "n_inj": n_inj,
             "poly_home": poly["price_home"] if poly else None,
-            "poly_url": poly["url"] if poly else None,
+            "poly_url": (poly_us_url(league, poly.get("slug") or
+                                     (poly.get("url") or "").rstrip("/").split("/")[-1],
+                                     g.get("date")) if poly else None),
             "poly_volume": poly["volume"] if poly else None,
             "kalshi_home": kal["price_home"] if kal else None,
             "books_home": round(cons, 4) if cons is not None else None,
