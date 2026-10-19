@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Backtest — conditional resolution rates (2026-10-18 23:42 UTC)</title>
+<html><head><meta charset="utf-8"><title>Backtest — conditional resolution rates (2026-10-18 23:54 UTC)</title>
 <style>
 body{font-family:system-ui,sans-serif;max-width:1000px;margin:20px auto;padding:0 16px;background:#0f1115;color:#e6e6e6}
 table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:24px}
@@ -10,31 +10,31 @@ h2{margin-top:32px;color:#7fb3ff}.meta{color:#8a93a3;margin-bottom:14px}
 .warn li{margin:6px 0}.big{font-size:22px;color:#8fe388}
 </style></head><body>
 <h1>📊 Backtest: do 90¢ markets resolve YES?</h1>
-<div class="meta">Generated 2026-10-18 23:42 UTC · 255 resolved Polymarket binary markets · min volume $5,000 · daily price samples · skipped 24407 markets, 1 lacked price history</div>
+<div class="meta">Generated 2026-10-18 23:54 UTC · 1490 resolved Polymarket binary markets · min volume $1,000 · daily price samples · skipped 10430 markets, 10 lacked price history</div>
 
 <div class="warn"><b>Key insight — read this first.</b> 90¢ is typically first touched only 2.4 hours before resolution — i.e. <i>after</i> the outcome is effectively decided (a goal scored, a vote counted). The 96%+ hit rate is mostly hindsight, not a tradeable edge: by the time a market prints 90¢, the information is already public. The real edge is getting in <i>before</i> the crowd moves it there.</div>
 
 <h2>The headline stat</h2>
-<p class="big">Markets that reached ≥90¢ resolved YES 96.8% of the time (n=93).</p>
+<p class="big">Markets that reached ≥90¢ resolved YES 92.3% of the time (n=736).</p>
 <p>But that includes markets that later collapsed. Split by final-week price:</p>
 <ul>
-<li>Reached ≥90¢ and <b>still ≥80¢</b> in the final week → YES <b>100.0%</b> (n=89)</li>
-<li>Reached ≥90¢ but <b>fell below 80¢</b> by the final week → YES <b>25.0%</b> (n=4)</li>
+<li>Reached ≥90¢ and <b>still ≥80¢</b> in the final week → YES <b>100.0%</b> (n=677)</li>
+<li>Reached ≥90¢ but <b>fell below 80¢</b> by the final week → YES <b>3.4%</b> (n=59)</li>
 </ul>
 
 <h2>Conditional resolution rates by price level</h2>
 <table><thead><tr><th>Reached ≥</th><th>N</th><th>Resolved YES</th>
 <th>Reached ≤</th><th>N</th><th>Resolved NO</th></tr></thead>
-<tbody><tr><td>≥50%</td><td>164</td><td>54.9%</td><td>≤50%</td><td>239</td><td>69.0%</td></tr><tr><td>≥60%</td><td>129</td><td>69.8%</td><td>≤40%</td><td>236</td><td>69.9%</td></tr><tr><td>≥70%</td><td>116</td><td>77.6%</td><td>≤30%</td><td>216</td><td>76.4%</td></tr><tr><td>≥80%</td><td>104</td><td>86.5%</td><td>≤20%</td><td>200</td><td>82.5%</td></tr><tr><td>≥90%</td><td>93</td><td>96.8%</td><td>≤10%</td><td>184</td><td>89.7%</td></tr><tr><td>≥95%</td><td>91</td><td>98.9%</td><td>≤5%</td><td>176</td><td>93.8%</td></tr></tbody></table>
+<tbody><tr><td>≥50%</td><td>1219</td><td>55.7%</td><td>≤50%</td><td>1321</td><td>61.4%</td></tr><tr><td>≥60%</td><td>1020</td><td>66.6%</td><td>≤40%</td><td>1168</td><td>69.4%</td></tr><tr><td>≥70%</td><td>913</td><td>74.4%</td><td>≤30%</td><td>1066</td><td>76.1%</td></tr><tr><td>≥80%</td><td>808</td><td>84.0%</td><td>≤20%</td><td>964</td><td>84.1%</td></tr><tr><td>≥90%</td><td>736</td><td>92.3%</td><td>≤10%</td><td>889</td><td>91.2%</td></tr><tr><td>≥95%</td><td>712</td><td>95.4%</td><td>≤5%</td><td>853</td><td>95.1%</td></tr></tbody></table>
 
 <h2>Price in final 7 days → resolved YES</h2>
 <table><thead><tr><th>Final-week band</th><th>N</th><th>Resolved YES</th></tr></thead>
-<tbody><tr><td>90%+</td><td>89</td><td>100.0%</td></tr><tr><td>70%–90%</td><td>0</td><td>—</td></tr><tr><td>50%–70%</td><td>1</td><td>100.0%</td></tr><tr><td>30%–50%</td><td>0</td><td>—</td></tr><tr><td>10%–30%</td><td>0</td><td>—</td></tr><tr><td>0%–10%</td><td>165</td><td>0.0%</td></tr></tbody></table>
+<tbody><tr><td>90%+</td><td>676</td><td>100.0%</td></tr><tr><td>70%–90%</td><td>1</td><td>100.0%</td></tr><tr><td>50%–70%</td><td>3</td><td>66.7%</td></tr><tr><td>30%–50%</td><td>1</td><td>0.0%</td></tr><tr><td>10%–30%</td><td>1</td><td>0.0%</td></tr><tr><td>0%–10%</td><td>808</td><td>0.0%</td></tr></tbody></table>
 
 <h2>Time from first touch to resolution</h2>
 <ul>
-<li>First hit 90¢ → resolution: n=93, median 0.1d, mean 0.2d</li>
-<li>First hit 10¢ → resolution: n=184, median 0.2d, mean 0.4d</li>
+<li>First hit 90¢ → resolution: n=736, median 0.1d, mean 0.2d</li>
+<li>First hit 10¢ → resolution: n=890, median 0.1d, mean 0.3d</li>
 </ul>
 
 <div class="warn"><b>Read this before trading on it</b><ul><li>Daily price samples can miss intraday spikes — a market that briefly touched 90c between samples is counted as never reaching it.</li><li>'Reached 90c' includes markets that later collapsed; see the collapse split above. Past crowd confidence is not future accuracy.</li><li>Selection bias: only markets the gamma API still lists. Deleted, voided, or ambiguous markets are excluded, which can inflate hit rates.</li><li>N per bucket is shown for a reason — buckets with small N are noise, not signal. Treat anything under ~30 as anecdote.</li><li>These are unconditional averages across all categories (sports, politics, crypto). Base rates differ wildly by category.</li><li>Polymarket only. Kalshi has no price-history API, so its markets can't be analyzed this way.</li></ul></div>
