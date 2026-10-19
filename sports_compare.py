@@ -905,29 +905,29 @@ the canonical table; anything ambiguous is listed as unmatched, never guessed.</
                          key=lambda r: (not r["flagged"], -r["max_div"], r["date"] or ""))
         body.append("<table><tr><th>Game</th><th>Start (UTC)</th>"
                     "<th>Books ML (home)</th><th>Avg spread</th><th>Total</th>"
-                    "<th>Polymarket</th><th>Poly as odds</th><th>ML gap</th><th>Spread watch</th>"
+                    "<th>Polymarket</th><th>ML gap</th><th>Spread watch</th>"
                     "<th>Context</th></tr>")
         for r in ordered:
             b = f"{r['books_home']*100:.1f}%" if r["books_home"] is not None else "n/a"
             s = f"{r['spread_home']:+.1f}" if r["spread_home"] is not None else "n/a"
             t = f"{r['total']:.1f}" if r["total"] is not None else "n/a"
             p = f"{r['poly_home']*100:.1f}%" if r["poly_home"] is not None else "n/a"
-            po = fmt_american(prob_to_american(r["poly_home"])) if r["poly_home"] is not None else "n/a"
+            po = f" ({fmt_american(prob_to_american(r['poly_home']))})" if r["poly_home"] is not None else ""
             gaps = "<br>".join(f"{s}: {direction_text(d)}" for s, d in r["divs"].items()) or "—"
             if r["spread_flags"]:
                 sw = "<br>".join(f"{f['book']} {f['point']:+.1f} ({f['off']:+.1f} off)"
                                  for f in r["spread_flags"])
             else:
                 sw = "—"
-            plink = (f"<a href='{r['poly_url']}' target='_blank' rel='noopener'>{p}</a>"
-                     if r.get("poly_url") else p)
+            plink = (f"<a href='{r['poly_url']}' target='_blank' rel='noopener'>{p}{po}</a>"
+                     if r.get("poly_url") else f"{p}{po}")
             ctx = htmlmod.escape(r["context"] or "—")
             cls = " class='flag'" if r["flagged"] else ""
             body.append(
                 f"<tr{cls}><td><b>{r['away']} @ {r['home']}</b></td>"
                 f"<td class='dim'>{htmlmod.escape(r['date'] or '')}</td>"
                 f"<td>{b}<br><span class='dim'>{r['n_books']} books</span></td>"
-                f"<td>{s}</td><td>{t}</td><td>{plink}</td><td>{po}</td><td>{gaps}</td>"
+                f"<td>{s}</td><td>{t}</td><td>{plink}</td><td>{gaps}</td>"
                 f"<td class='ctx'>{sw}</td><td class='ctx'>{ctx}</td></tr>")
         body.append("</table>")
         if res["unmatched"]:
@@ -1044,20 +1044,19 @@ def dashboard_body(all_leagues, game_prefix):
             s = f"{r['spread_home']:+.1f}" if r["spread_home"] is not None else "—"
             t = f"{r['total']:.1f}" if r["total"] is not None else "—"
             p = f"{r['poly_home'] * 100:.1f}%" if r["poly_home"] is not None else "—"
-            po = fmt_american(prob_to_american(r["poly_home"])) if r["poly_home"] is not None else "—"
+            po = f" ({fmt_american(prob_to_american(r['poly_home']))})" if r["poly_home"] is not None else ""
             rows.append(
                 f"<tr><td>{_game_link(r, game_prefix)}</td>"
                 f"<td class='dim'>{htmlmod.escape(r['date'] or '')}</td>"
                 f"<td class='num'>{_ml_cell(r)}</td>"
                 f"<td class='num'>{s}</td>"
                 f"<td class='num'>{t}</td>"
-                f"<td class='num'>{p}</td>"
-                f"<td class='num'>{po}</td>"
+                f"<td class='num'>{p}{po}</td>"
                 f"<td>{_signal_cell(r)}</td></tr>")
         parts.append(
             "<div class='tbl-wrap'><table><thead><tr>"
             "<th>Game</th><th>Start (UTC)</th><th>Avg moneyline (home)</th>"
-            "<th>Avg spread</th><th>Total</th><th>Polymarket</th><th>Poly as odds</th><th>Signals</th>"
+            "<th>Avg spread</th><th>Total</th><th>Polymarket</th><th>Signals</th>"
             "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>")
     return "".join(parts)
 
@@ -1112,14 +1111,12 @@ def render_game_page(r, gen_note):
          f"{r['total']:.1f}" if r["total"] is not None else "—", ""),
     ]
     if r["poly_home"] is not None:
+        fair = fmt_american(prob_to_american(r["poly_home"]))
         plink = (f"<a href='{htmlmod.escape(r['poly_url'])}' target='_blank' "
-                 f"rel='noopener'>{r['poly_home'] * 100:.1f}%</a>"
-                 if r.get("poly_url") else f"{r['poly_home'] * 100:.1f}%")
+                 f"rel='noopener'>{r['poly_home'] * 100:.1f}% ({fair})</a>"
+                 if r.get("poly_url") else f"{r['poly_home'] * 100:.1f}% ({fair})")
         vol = f"${r['poly_volume']:,.0f}" if r.get("poly_volume") else "—"
         cons_rows.append(("Polymarket (home)", plink, f"vol {vol}"))
-        cons_rows.append(("Polymarket as fair odds",
-                         fmt_american(prob_to_american(r["poly_home"])),
-                         "no-vig equivalent"))
     else:
         cons_rows.append(("Polymarket (home)", "—", "no moneyline market found"))
     parts.append("<div class='tbl-wrap'><table><thead><tr><th>Consensus</th>"
