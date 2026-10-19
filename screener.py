@@ -162,7 +162,7 @@ def normalize_polymarket(events):
                 "move24h": _f(m.get("oneDayPriceChange")),
                 "created": created,
                 "closes": _iso(m.get("endDate") or ev.get("endDate")),
-                "url": f"https://polymarket.com/event/{ev.get('slug', '')}",
+                "url": f"https://polymarket.us/event/{ev.get('slug', '')}",
             })
     return out
 
