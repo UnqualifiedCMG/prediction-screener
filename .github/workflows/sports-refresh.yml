@@ -1,0 +1,60 @@
+# PolyScope sports refresh — daily divergence leaderboard rebuild.
+#
+# Runs sports_compare.py against live APIs and commits the regenerated
+# site/sports.html back to main, which GitHub Pages then redeploys.
+#
+# Quota budget (The Odds API free tier):
+#   - 1 run/day x 3 sports (nfl, nba, mlb) = ~3 credits/day, ~90/month.
+#     Well under the free tier. Do NOT increase schedule frequency
+#     without checking quota first.
+#   - ODDS_API_KEY is stored as a repo secret (Settings > Secrets >
+#     Actions). It is referenced here as ${{ secrets.ODDS_API_KEY }}
+#     and never appears in code, logs, or committed files.
+#   - ESPN, Polymarket, Kalshi, Open-Meteo need no key.
+name: Sports data refresh
+
+on:
+  schedule:
+    # Daily at 12:00 UTC (8am ET) — after overnight odds settle.
+    - cron: "0 12 * * *"
+  workflow_dispatch:  # allow manual runs from the Actions tab
+
+permissions:
+  contents: write  # needed to commit the rebuilt page back to main
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Rebuild sports + data pages
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          # Quota status prints to stderr and appears in this step's log.
+          python3 sports_compare.py --leagues nfl,nba,mlb \
+            --threshold 0.03 --html --json > /tmp/sports.json 2>/tmp/sports.log
+          tail -5 /tmp/sports.log
+          python3 data_page.py --html 2>&1 | tail -3
+
+      - name: Commit and push
+        run: |
+          git config user.name "polyscope-bot"
+          git config user.email "polyscope-bot@users.noreply.github.com"
+          git add site/sports.html site/data.html
+          # keep a dated JSON snapshot of the raw comparison for the record
+          mkdir -p site/data
+          cp /tmp/sports.json "site/data/sports-$(date -u +%F).json"
+          git add site/data/"sports-$(date -u +%F).json"
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "sports+data refresh $(date -u +%F)"
+          git push
