@@ -3,26 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prediction Market Tracker</title>
-<style>
-  body { font-family: -apple-system, system-ui, sans-serif; background: #0f1419; color: #e7e9ea; max-width: 720px; margin: 0 auto; padding: 48px 20px; }
-  h1 { font-size: 28px; }
-  p { color: #8b98a5; line-height: 1.6; }
-  .cards { display: grid; gap: 12px; margin-top: 28px; }
-  a.card { display: block; background: #1a2332; border: 1px solid #2f3b4d; border-radius: 12px; padding: 20px; text-decoration: none; color: #e7e9ea; }
-  a.card:hover { border-color: #1d9bf0; }
-  a.card h2 { margin: 0 0 6px; font-size: 18px; }
-  a.card span { color: #8b98a5; font-size: 14px; }
-  footer { margin-top: 40px; font-size: 12px; color: #5b6b7b; }
-</style>
+<title>PolyScope — Prediction Market Tracker</title>
+<link rel="stylesheet" href="site/styles.css">
 </head>
 <body>
-  <h1>Prediction Market Tracker</h1>
-  <p>Live screens and backtested stats from Polymarket and Kalshi public data. For research — not financial advice.</p>
+<header class="site-header">
+  <h1>PolyScope</h1>
+  <p class="tagline">Live Polymarket &amp; Kalshi data, backtested. For research — not financial advice.</p>
+  <nav>
+    <a href="site/index.html">Dashboard</a>
+    <a href="site/markets.html">Markets</a>
+    <a href="site/stats.html">Backtest Stats</a>
+    <a href="site/about.html">Methodology</a>
+  </nav>
+</header>
+<main>
   <div class="cards">
-    <a class="card" href="dashboard.html"><h2>Market Screener</h2><span>Top volume, closing soon, biggest movers, extremes, new markets, search</span></a>
-    <a class="card" href="backtest.html"><h2>Backtest Report</h2><span>Do markets that touch 90¢ actually resolve? Conditional resolution rates with sample sizes</span></a>
+    <a class="card" href="site/index.html"><h2>Market Dashboard</h2><span>Top volume, biggest movers, closing soon, extremes watch, new listings</span></a>
+    <a class="card" href="site/markets.html"><h2>Market Explorer</h2><span>Searchable, sortable — 2,000 most liquid open markets</span></a>
+    <a class="card" href="site/stats.html"><h2>Backtest Stats</h2><span>Do 90¢ markets resolve? Conditional resolution rates, n=1,490</span></a>
+    <a class="card" href="site/about.html"><h2>Methodology</h2><span>Data sources, limitations, honest caveats</span></a>
   </div>
-  <footer>Data: Polymarket &amp; Kalshi public APIs. Code: <a href="https://github.com/UnqualifiedCMG/prediction-screener" style="color:#1d9bf0">GitHub</a></footer>
+</main>
+<footer>Data: Polymarket &amp; Kalshi public APIs · Code: <a href="https://github.com/UnqualifiedCMG/prediction-screener">GitHub</a></footer>
 </body>
 </html>
