@@ -214,7 +214,7 @@ def pick_markets(events, want, min_volume, include_multi=False):
                 ).timestamp()
             except Exception:  # noqa: BLE001
                 closed_ts = None
-            base_url = f"https://polymarket.com/event/{ev.get('slug', '')}"
+            base_url = f"https://polymarket.us/event/{ev.get('slug', '')}"
             base_q = m.get("question") or ev.get("title", "?")
 
             if is_binary:
