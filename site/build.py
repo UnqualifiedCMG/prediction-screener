@@ -2,10 +2,13 @@
 """
 PolyScope — static prediction-market tracking site generator.
 
-Pulls live Polymarket + Kalshi data, runs the screener screens and the
+Pulls live Polymarket sports data, runs the screener screens and the
 backtest, and emits a static site to site/. Designed for cron regeneration:
 fast (caches API data in hidden_cache/), idempotent (rewrites the same
 files), and every page is stamped with its data timestamp.
+
+Kalshi is parked (see screener.ENABLE_KALSHI) — no Kalshi fetching or
+display anywhere in the generated site until their data improves.
 
 Usage:
     python3 site/build.py               # build; refetches open markets if cache older than 30 min
@@ -96,11 +99,18 @@ def load_open_markets(refresh=False):
 
     print("Fetching open markets (Polymarket)…", file=sys.stderr)
     recs = screener.normalize_polymarket(screener.fetch_polymarket(2000))
-    print("Fetching open markets (Kalshi)…", file=sys.stderr)
-    try:
-        recs += screener.normalize_kalshi(screener.fetch_kalshi(1000))
-    except Exception as e:  # noqa: BLE001 - Kalshi flakiness shouldn't kill the build
-        print(f"Kalshi fetch failed ({e}); building with Polymarket only.", file=sys.stderr)
+    if screener.ENABLE_KALSHI:
+        print("Fetching open markets (Kalshi)…", file=sys.stderr)
+        try:
+            recs += screener.normalize_kalshi(screener.fetch_kalshi(1000))
+        except Exception as e:  # noqa: BLE001 - Kalshi flakiness shouldn't kill the build
+            print(f"Kalshi fetch failed ({e}); building with Polymarket only.", file=sys.stderr)
+    else:
+        print("Kalshi is parked (screener.ENABLE_KALSHI=False) — Polymarket only.",
+              file=sys.stderr)
+    # Defensive: strip any Kalshi records lingering in a stale cache snapshot.
+    if not screener.ENABLE_KALSHI:
+        recs = [r for r in recs if r.get("source") != "kalshi"]
     fetched_at = NOW.isoformat()
     with open(path, "w") as f:
         json.dump({"fetched_at": fetched_at, "records": [_ser_rec(r) for r in recs]}, f)
@@ -144,8 +154,8 @@ def load_backtest_stats():
 # --------------------------------------------------------------------------
 
 NAV = [("index.html", "Dashboard"), ("markets.html", "Markets"),
-       ("stats.html", "Stats"), ("sports.html", "Sports"),
-       ("data.html", "Data"), ("about.html", "About")]
+       ("backtests.html", "Backtests"), ("sports.html", "Sports"),
+       ("fantasy.html", "Fantasy"), ("data.html", "Data"), ("about.html", "About")]
 
 
 def shell(title, active, body, fetched_note, gen_note):
@@ -208,13 +218,12 @@ def market_row(r, show_move=True):
             f"<td>{badge}</td></tr>")
 
 
-def market_table(rows, title, sub, show_move=True, anchor=None):
+def market_table(rows, title, show_move=True, anchor=None):
     move_th = "<th>24h move</th>" if show_move else ""
     body = "".join(market_row(r, show_move) for r in rows) or \
         "<tr><td colspan='7'>No results in this snapshot.</td></tr>"
     aid = f' id="{anchor}"' if anchor else ""
     return (f"<h2{aid}>{htmlmod.escape(title)} <span class='count'>({len(rows)})</span></h2>"
-            f"<p class='sub'>{sub}</p>"
             f"<div class='tbl-wrap'><table><thead><tr><th>Market</th><th>Yes %</th>"
             f"{move_th}<th>Vol 24h</th><th>Vol total</th><th>Closes in</th><th>Src</th>"
             f"</tr></thead><tbody>{body}</tbody></table></div>")
@@ -227,25 +236,14 @@ def render_index(recs):
     ext = screener.screen_extremes(recs, 10, 1000)
     new = screener.screen_new(recs, 8, 0)
     n_poly = sum(1 for r in recs if r["source"] == "poly")
-    n_kal = sum(1 for r in recs if r["source"] == "kalshi")
     body = f"""
 <h1>Prediction markets, screened</h1>
-<p class="sub">Live snapshot of open markets on Polymarket ({n_poly:,} records)
-and Kalshi ({n_kal:,} records) — liquidity, momentum, deadlines, and crowded
-consensus trades. Built for research, not recommendations.</p>
 """
-    body += market_table(vol, "Top volume",
-                         "The most liquid open markets. Liquidity = tradable, and volume is attention.")
-    body += market_table(mov, "Biggest 24h movers",
-                         "Largest 24-hour price moves with real volume behind them. "
-                         "Polymarket only — Kalshi's API exposes no price history, so Kalshi rows can't appear here.")
-    body += market_table(clo, "Closing soon",
-                         "Expiring within 7 days, sorted by volume. Resolution edges live here — mispriced tails get found near deadlines.")
-    body += market_table(ext, "Extremes watch",
-                         "Priced ≥90% or ≤10% with high 24h volume. Crowded consensus trades — "
-                         "great content fuel: everyone thinks X is a lock. Is it?")
-    body += market_table(new, "Fresh listings",
-                         "Markets listed in the last 48h. New narratives before the crowd prices them.")
+    body += market_table(vol, "Top volume")
+    body += market_table(mov, "Biggest 24h movers")
+    body += market_table(clo, "Closing soon")
+    body += market_table(ext, "Extremes watch")
+    body += market_table(new, "Fresh listings")
     return body
 
 
@@ -271,15 +269,12 @@ def render_markets(recs):
             f"<td>{'POLY' if r['source'] == 'poly' else 'KALSHI'}</td></tr>")
     return f"""
 <h1>Markets explorer</h1>
-<p class="sub">Every open market in this snapshot (top 2,000 by volume).
-Type to filter, click headers to sort. Prices are Yes probabilities.</p>
 <div class="controls">
   <input type="text" id="q" placeholder="Search markets… (e.g. Fed, NBA, election)"
          oninput="filterRows()">
   <div class="seg" id="srcseg">
     <button class="on" data-s="all" onclick="setSrc('all',this)">All</button>
     <button data-s="poly" onclick="setSrc('poly',this)">Polymarket</button>
-    <button data-s="kalshi" onclick="setSrc('kalshi',this)">Kalshi</button>
   </div>
 </div>
 <div class="tbl-wrap"><table id="mx"><thead><tr>
@@ -407,75 +402,14 @@ treat small-N buckets as anecdote, not signal.</p>
 
 
 def render_about():
+    # Deliberately minimal: the site may be sold one day, so this page
+    # reveals as little as possible. Methodology lives in the repo README,
+    # not on the public site.
     return """
-<h1>About &amp; methodology</h1>
-<div class="method">
-<p>PolyScope is a research snapshot of prediction-market data — Polymarket and
-Kalshi — rebuilt on a schedule. It tracks what open markets are priced at, where
-the volume is, and how extreme prices have resolved historically. It is built for
-research. It is not financial advice and nothing here is a recommendation to trade.</p>
-
-<h3>Data sources</h3>
-<ul>
-<li><b>Polymarket</b> — public gamma API (<code>gamma-api.polymarket.com/events</code>)
-for market listings, plus the CLOB API (<code>clob.polymarket.com/prices-history</code>)
-for daily price history. Prices shown are Yes-token prices as probabilities.</li>
-<li><b>Kalshi</b> — public trade API
-(<code>api.elections.kalshi.com/trade-api/v2/markets</code>) for open markets.
-Prices shown are the <b>bid/ask midpoint</b>, not last-trade prices, because Kalshi
-does not expose last-trade prices on this endpoint.</li>
-</ul>
-
-<h3>What the screens mean</h3>
-<ul>
-<li><b>Top volume</b> — most liquid open markets. Liquidity means a position can
-actually be entered and exited; volume is also a proxy for attention.</li>
-<li><b>Biggest 24h movers</b> — largest price moves in the last day, filtered to
-markets with real 24h volume so thin books don't dominate. Polymarket only.</li>
-<li><b>Closing soon</b> — markets expiring within 7 days, sorted by volume.
-Mispriced tails tend to surface near deadlines.</li>
-<li><b>Extremes watch</b> — markets priced ≥90% or ≤10% with high 24h volume.
-Crowded consensus trades: useful both as signals and as things to argue against.</li>
-<li><b>Fresh listings</b> — markets created in the last 48h; new narratives
-before the crowd has priced them.</li>
-</ul>
-
-<h3>How the backtest works</h3>
-<ul>
-<li>Pulls <b>resolved</b> Polymarket markets (gamma API, <code>closed=true</code>),
-newest first, across end-date windows to get past the API's pagination cap.</li>
-<li>Resolution comes from each market's <b>final outcomePrices</b> (1.00/0.00).
-Markets without a clean resolution (voided, ambiguous) are skipped and counted,
-never guessed.</li>
-<li>Each market's <b>daily price history</b> is walked to find its max/min price,
-final-week price, and first touch of 90¢/10¢.</li>
-<li>Multi-outcome markets are included as <b>per-outcome binary records</b> —
-only when exactly one outcome has a final price above 99¢ (a clean winner).</li>
-<li>Every bucket reports its <b>N</b>. Small-N buckets are noise, not signal.</li>
-</ul>
-
-<h3>Known limitations</h3>
-<ul>
-<li><b>Kalshi has no price-history API</b>, so "reached 90¢ at some point" is
-uncomputable there, and Kalshi never appears in the movers screen. Kalshi's
-markets endpoint is also flooded with provisional sports-combo scaffolds; the
-screener requests markets closing 14+ days out and drops provisional/multivariate
-records, which means <b>near-term Kalshi markets don't appear</b>.</li>
-<li>Daily price samples can miss intraday spikes.</li>
-<li>Only markets the APIs still list are analyzed — deleted or voided markets are
-excluded, which can inflate historical hit rates (selection bias).</li>
-<li>Averages are unconditional across categories (sports, politics, crypto).
-Base rates differ wildly by category.</li>
-<li>Polymarket <code>volume24h</code> is event-level, shared across that event's
-markets; per-market 24h volume isn't exposed.</li>
-<li>Stale records (close date passed but still listed open) are filtered out.</li>
-</ul>
-
-<h3>Rebuilding</h3>
-<p>The site is generated by <code>site/build.py</code> from live API pulls, with
-raw responses cached in <code>hidden_cache/</code>. See the README's
-"Site" section for build, preview, and cron instructions.</p>
-</div>
+<h1>About</h1>
+<p>PolyScope tracks sports prediction-market prices, sportsbook odds, and related sports data.</p>
+<p>For research, not financial advice. Nothing here is a recommendation to trade or bet.</p>
+<p>&#x1F51E; 21+. Gambling problem? Call 1-800-GAMBLER.</p>
 """
 
 
@@ -495,8 +429,6 @@ def main():
     os.makedirs(out, exist_ok=True)
 
     recs, fetched_at = load_open_markets(refresh=args.refresh)
-    print("Computing backtest stats…", file=sys.stderr)
-    stats = load_backtest_stats()
 
     fetched_note = _fmt_ts(fetched_at)
     gen_note = NOW.strftime("%Y-%m-%d %H:%M UTC")
@@ -504,14 +436,29 @@ def main():
     pages = {
         "index.html": ("Dashboard", render_index(recs)),
         "markets.html": ("Markets explorer", render_markets(recs)),
-        "stats.html": ("Backtest stats", render_stats(stats)),
         "about.html": ("About & methodology", render_about()),
     }
+    # NOTE: stats.html (old backtest dashboard) is no longer generated or linked.
+    # The "Backtests" nav tab points to backtests.html, a hand-written research
+    # article kept in site/. backtest.html is kept in the repo as history.
     for fname, (title, body) in pages.items():
         path = os.path.join(out, fname)
         with open(path, "w") as f:
             f.write(shell(title, fname, body, fetched_note, gen_note))
         print(f"Wrote {path}", file=sys.stderr)
+
+    # The repo-root index.html IS the dashboard — no separate landing page.
+    # Same dashboard content, with nav/asset links rewritten to site/...
+    dash_title, dash_body = pages["index.html"]
+    root_page = shell(dash_title, "index.html", dash_body, fetched_note, gen_note)
+    root_page = root_page.replace('href="styles.css"', 'href="site/styles.css"')
+    for href, _label in NAV:
+        if href != "index.html":
+            root_page = root_page.replace(f'href="{href}"', f'href="site/{href}"')
+    root_idx = os.path.join(BASE, "index.html")
+    with open(root_idx, "w") as f:
+        f.write(root_page)
+    print(f"Wrote {root_idx} (dashboard as landing)", file=sys.stderr)
 
     # styles.css lives next to build.py; copy it into the output dir
     import shutil
@@ -519,7 +466,7 @@ def main():
     if os.path.abspath(css_src) != os.path.abspath(os.path.join(out, "styles.css")):
         shutil.copy(css_src, os.path.join(out, "styles.css"))
 
-    print(f"Done: {len(recs)} open markets, {stats['n']} backtested markets.", file=sys.stderr)
+    print(f"Done: {len(recs)} open sports markets.", file=sys.stderr)
 
 
 if __name__ == "__main__":
