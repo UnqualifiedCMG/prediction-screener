@@ -105,6 +105,52 @@ effectively decided. It's hindsight, not a tradeable edge. The honest read
 and full caveats (daily sampling misses intraday spikes, selection bias,
 category base rates) are printed with every run.
 
+## The site: PolyScope (`site/`)
+
+A static tracking site generated from live data — dashboard, markets explorer,
+backtest stats, methodology. Rebuild it any time; every page is stamped with
+its data timestamp.
+
+```bash
+python3 site/build.py               # build; refetches open markets if snapshot cache older than 30 min
+python3 site/build.py --refresh     # force a fresh pull
+python3 site/build.py --out /tmp/x  # build to a different directory
+```
+
+Preview locally:
+
+```bash
+cd ~/workspace/prediction-screener/site && python3 -m http.server 8000
+# then open http://localhost:8000
+```
+
+Pages:
+
+| Page | What it is |
+|------|------------|
+| `index.html` | Dashboard: top volume, biggest 24h movers, closing soon, extremes watch, fresh listings |
+| `markets.html` | Searchable, sortable explorer (top 2,000 open markets by volume) |
+| `stats.html` | Backtest: conditional resolution rates with N per bucket and the full caveats |
+| `about.html` | Methodology, data sources, limitations, "for research, not financial advice" |
+
+How it works: `site/build.py` pulls open markets (cached to
+`hidden_cache/open_snapshot.json`, refetched only if stale), reuses
+`screener.py`'s screens and `backtest.py`'s stats on the cached resolved-market
+data, and writes vanilla HTML + one CSS file — no framework, no build step.
+Kalshi gaps are labeled on-site (no price history → no movers; near-term
+markets filtered as provisional spam).
+
+Cron example (regenerate hourly):
+
+```bash
+0 * * * * cd ~/workspace/prediction-screener && python3 site/build.py >/tmp/polyscope.log 2>&1
+```
+
+Deployment note: the generated `site/` directory is fully static — it can be
+served as-is from any static host (e.g. GitHub Pages). Colin's repo
+`prediction-screener` on the `UnqualifiedCMG` GitHub account publishes it via
+GitHub Pages.
+
 ## Files
 
 - `screener.py` — the live screener. stdlib + `requests` only.
