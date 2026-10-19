@@ -1,0 +1,203 @@
+/* PolyScope — dark, clean, mobile-readable. Vanilla CSS, no build step. */
+
+:root {
+  --bg: #0f1115;
+  --panel: #161a21;
+  --panel2: #1c1f26;
+  --border: #262b35;
+  --text: #e6e6e6;
+  --muted: #9aa4b2;
+  --faint: #6b7482;
+  --accent: #7fb3ff;
+  --up: #8fe388;
+  --down: #ff8f8f;
+  --warn-bg: #241a08;
+  --warn-border: #7a5b1e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+/* Header */
+.site-header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+.brand span { color: var(--accent); }
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 18px;
+  font-size: 15px;
+}
+nav a:hover, nav a.on { color: var(--text); }
+nav a.on { border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+
+/* Freshness banner */
+.freshness {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 18px 0 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Sections */
+h1 { font-size: 28px; margin: 22px 0 6px; }
+h2 { font-size: 20px; margin: 34px 0 4px; color: var(--accent); }
+h2 .count { color: var(--faint); font-size: 14px; font-weight: 400; }
+p.sub { color: var(--muted); margin: 0 0 12px; font-size: 14px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--panel); }
+th {
+  text-align: left;
+  padding: 10px 10px;
+  color: var(--muted);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+th.sortable { cursor: pointer; }
+th.sortable:hover { color: var(--text); }
+td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+td.q { max-width: 480px; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pos { color: var(--up); }
+.neg { color: var(--down); }
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.badge.poly { color: #8fe388; border-color: #2c4a2a; }
+.badge.kalshi { color: #ffd479; border-color: #4a3d1e; }
+
+/* Stat callouts */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+.stat-card .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card .v { font-size: 30px; font-weight: 700; margin: 4px 0; }
+.stat-card .d { font-size: 13px; color: var(--muted); }
+
+.warn {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 24px 0;
+  font-size: 14px;
+}
+.warn b { color: #ffd479; }
+.warn ul { margin: 8px 0 4px; padding-left: 20px; }
+.warn li { margin: 6px 0; color: var(--text); }
+
+/* Controls (markets explorer) */
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+  align-items: center;
+}
+.controls input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 15px;
+}
+.seg { display: flex; gap: 6px; }
+.seg button {
+  background: var(--panel2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.seg button.on { background: #2f6fed; color: #fff; border-color: #2f6fed; }
+
+/* Footer */
+footer.foot {
+  margin: 48px 0 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  color: var(--faint);
+  font-size: 13px;
+}
+
+/* Methodology */
+.method h3 { color: var(--text); margin: 26px 0 6px; }
+.method p, .method li { color: #c9cfd8; font-size: 15px; }
+.method ul { padding-left: 20px; }
+.method code {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  h1 { font-size: 23px; }
+  nav a { margin-left: 12px; font-size: 14px; }
+  td, th { padding: 7px 6px; font-size: 13px; }
+}
