@@ -229,24 +229,6 @@ def market_table(rows, title, show_move=True, anchor=None):
             f"</tr></thead><tbody>{body}</tbody></table></div>")
 
 
-def render_index(recs):
-    vol = screener.screen_volume(recs, 15, 1000)
-    mov = screener.screen_movers(recs, 10, 1000)
-    clo = screener.screen_closing(recs, 10, 1000)
-    ext = screener.screen_extremes(recs, 10, 1000)
-    new = screener.screen_new(recs, 8, 0)
-    n_poly = sum(1 for r in recs if r["source"] == "poly")
-    body = f"""
-<h1>Prediction markets, screened</h1>
-"""
-    body += market_table(vol, "Top volume")
-    body += market_table(mov, "Biggest 24h movers")
-    body += market_table(clo, "Closing soon")
-    body += market_table(ext, "Extremes watch")
-    body += market_table(new, "Fresh listings")
-    return body
-
-
 def render_markets(recs):
     # Cap the explorer for page weight; top 2000 by volume.
     recs = sorted(recs, key=lambda r: r["volume"] or 0, reverse=True)[:2000]
@@ -433,8 +415,10 @@ def main():
     fetched_note = _fmt_ts(fetched_at)
     gen_note = NOW.strftime("%Y-%m-%d %H:%M UTC")
 
+    # NOTE: the dashboard (index.html, repo root included) is now the weekly
+    # games slate, written by sports_compare.py --html. build.py no longer
+    # writes any dashboard content — only markets/about here.
     pages = {
-        "index.html": ("Dashboard", render_index(recs)),
         "markets.html": ("Markets explorer", render_markets(recs)),
         "about.html": ("About & methodology", render_about()),
     }
@@ -446,19 +430,6 @@ def main():
         with open(path, "w") as f:
             f.write(shell(title, fname, body, fetched_note, gen_note))
         print(f"Wrote {path}", file=sys.stderr)
-
-    # The repo-root index.html IS the dashboard — no separate landing page.
-    # Same dashboard content, with nav/asset links rewritten to site/...
-    dash_title, dash_body = pages["index.html"]
-    root_page = shell(dash_title, "index.html", dash_body, fetched_note, gen_note)
-    root_page = root_page.replace('href="styles.css"', 'href="site/styles.css"')
-    for href, _label in NAV:
-        if href != "index.html":
-            root_page = root_page.replace(f'href="{href}"', f'href="site/{href}"')
-    root_idx = os.path.join(BASE, "index.html")
-    with open(root_idx, "w") as f:
-        f.write(root_page)
-    print(f"Wrote {root_idx} (dashboard as landing)", file=sys.stderr)
 
     # styles.css lives next to build.py; copy it into the output dir
     import shutil
