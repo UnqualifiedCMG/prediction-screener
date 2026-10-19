@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sports — PolyScope</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+tr.flag td { background: #2a2118; } .ctx { font-size: 12px; color: #8b98a5; }
+.dim { color: #8b98a5; font-size: 12px; } .lede { color: #8b98a5; }
+.method li { margin-bottom: 6px; color: #aab4c0; }
+details { margin-top: 16px; } summary { cursor: pointer; color: #1d9bf0; }
+.notice { background: #1a2332; border: 1px solid #2f3b4d; border-radius: 8px;
+padding: 12px 16px; margin: 16px 0; font-size: 13px; color: #8b98a5; }
+</style></head>
+<body>
+<header class="site-header"><div class="wrap head-row">
+<a class="brand" href="index.html">◈ Poly<span>Scope</span></a>
+<nav><a href="index.html">Dashboard</a><a href="markets.html">Markets</a><a href="stats.html">Stats</a><a href="sports.html">Sports</a><a href="data.html">Data</a><a href="about.html">About</a></nav></div></header>
+<main class="wrap">
+<div class="notice">🔞 21+. Informational only — not betting advice. Prices move; verify before acting. 21+. Gambling problem? Call 1-800-GAMBLER.</div>
+<div class='notice'>⚠️ Sportsbook odds unavailable in this build (no Odds API key or quota exhausted) — showing prediction-market prices only. Divergences need book consensus.</div><div class="freshness">📡 Sports snapshot generated 2026-10-19 01:01 UTC ·
+odds cached (free-tier friendly: refreshes ≤2x/day) · Informational only — not betting advice. Prices move; verify before acting. 21+. Gambling problem? Call 1-800-GAMBLER.</div>
+<h1>Sports: markets vs books</h1>
+<p class="lede">Prediction-market moneylines vs vig-free sportsbook consensus.
+Divergence ≥ 3pp is flagged. Informational only — not betting advice. Prices move; verify before acting. 21+. Gambling problem? Call 1-800-GAMBLER.</p>
+<h2>Methodology</h2>
+<ul class="method">
+<li>Sportsbook odds → implied probability per book, de-vigged by dividing each side
+by the overround (basic normalization). Consensus = mean de-vigged home-win probability across books.</li>
+<li>Polymarket: Yes-token price on the game moneyline market. Kalshi: orderbook mid.</li>
+<li>Team matching is conservative — a game only appears when both teams resolve through
+the canonical table; anything ambiguous is listed as unmatched, never guessed.</li>
+<li>Context: ESPN records/injuries + Open-Meteo weather for outdoor NFL games. Free sources only.</li>
+</ul><h2>NFL — divergence leaderboard (0 flagged / 1 games)</h2><p>No divergences above threshold right now.</p><details><summary>All compared games (1 below threshold)</summary><table><tr><th>Game</th><th>Books</th><th>Poly</th><th>Kalshi</th><th>Max gap</th></tr><tr><td>WAS @ SF</td><td>n/a</td><td>78.5%</td><td>50.3%</td><td>0.0pp</td></tr></table></details><h2>NBA — divergence leaderboard (0 flagged / 3 games)</h2><p>No divergences above threshold right now.</p><details><summary>All compared games (3 below threshold)</summary><table><tr><th>Game</th><th>Books</th><th>Poly</th><th>Kalshi</th><th>Max gap</th></tr><tr><td>BOS @ DET</td><td>n/a</td><td>48.5%</td><td>50.0%</td><td>0.0pp</td></tr><tr><td>PHI @ NY</td><td>n/a</td><td>62.5%</td><td>n/a</td><td>0.0pp</td></tr><tr><td>OKC @ SA</td><td>n/a</td><td>55.5%</td><td>n/a</td><td>0.0pp</td></tr></table></details>
+</main>
+<footer class="wrap"><p>Data: Polymarket · Kalshi · The Odds API · ESPN · Open-Meteo.
+Free tiers only. <a href="about.html">Methodology</a></p></footer>
+</body></html>
