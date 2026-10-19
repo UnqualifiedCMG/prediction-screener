@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Prediction-market screener — Polymarket + Kalshi, public APIs only.
+Prediction-market screener — Polymarket (sports), public API only.
 
-Pulls live open markets and runs a set of screens useful for spotting
-what the money is saying (and mispricing):
+Pulls live open sports markets and runs a set of screens useful for
+spotting what the money is saying (and mispricing):
 
     volume   - highest-volume open markets (liquidity = tradable)
     closing  - expiring within 7 days, sorted by volume (resolution edge)
@@ -11,7 +11,15 @@ what the money is saying (and mispricing):
     extremes - priced >=90% or <=10% with high volume (his content fuel:
                consensus trades and crowded "locks")
     new      - markets created in the last 48h, sorted by volume
-    search   - keyword filter over titles (e.g. --query "Fed")
+    search   - keyword filter over titles (e.g. --query "NBA")
+
+Kalshi support is parked (ENABLE_KALSHI = False): its API data is too thin
+to be useful right now (provisional sports-combo spam, no price history).
+The fetch/normalize code is intact — flip the flag to bring it back.
+
+Sports-only by default (SPORTS_ONLY = True): non-sports markets are
+filtered at normalization using the API's own tags/ticker/series fields.
+Pass --all-markets to analyze everything.
 
 Outputs a clean terminal table, an HTML dashboard (no build step, just
 open dashboard.html), or JSON for cron/tooling use (--json).
@@ -47,6 +55,20 @@ POLY_URL = "https://gamma-api.polymarket.com/events"
 KALSHI_URL = "https://api.elections.kalshi.com/trade-api/v2/markets"
 TIMEOUT = 25
 PAUSE = 0.35  # polite pause between paged requests
+
+# --------------------------------------------------------------------------
+# Feature flags
+# --------------------------------------------------------------------------
+# Kalshi is parked: its API data is too thin to be useful (provisional
+# sports-combo spam floods listings; no price-history endpoint). The
+# fetch/normalize/display code below is intact and tested — set to True
+# to bring Kalshi back if their data situation improves.
+ENABLE_KALSHI = False
+
+# Sports-only: the site is a sports tracker. Non-sports markets are dropped
+# at normalization using the API's own categorization (tags, then ticker /
+# series prefixes). Ambiguous events are excluded, never guessed.
+SPORTS_ONLY = True
 
 
 def _get(url, params):
@@ -132,10 +154,44 @@ def _f(x, default=None):
         return default
 
 
-def normalize_polymarket(events):
+# Sports ticker/series prefixes seen on Polymarket game markets.
+SPORTS_TICKER_PREFIXES = (
+    "nfl-", "nba-", "mlb-", "nhl-", "wnba-", "mls-",
+    "ufc-", "mma-", "pga-", "f1-", "nascar-",
+    "soccer-", "epl-", "la-liga-", "serie-a-", "bundesliga-",
+    "ligue-1-", "ucl-", "cricket-", "tennis-", "golf-",
+)
+SPORTS_SERIES_NAMES = ("nfl", "nba", "mlb", "nhl", "wnba", "mls")
+
+
+def is_sports_event(ev):
+    """True when the event is sports, using the API's own categorization.
+
+    1. The event's tags contain "Sports" (exact, case-insensitive).
+    2. Fallback: ticker or series starts with a known league prefix
+       (nfl-, nba-, ...), which is how Polymarket names game markets.
+    Ambiguous events are excluded, never guessed.
+    """
+    tags = [(t.get("label") or t.get("slug") or "").strip().lower()
+            for t in (ev.get("tags") or [])]
+    if "sports" in tags:
+        return True
+    ticker = (ev.get("ticker") or "").lower()
+    if ticker.startswith(SPORTS_TICKER_PREFIXES):
+        return True
+    series = str(ev.get("seriesSlug") or ev.get("series") or "").lower()
+    if (series.startswith(SPORTS_TICKER_PREFIXES)
+            or series in SPORTS_SERIES_NAMES):
+        return True
+    return False
+
+
+def normalize_polymarket(events, sports_only=SPORTS_ONLY):
     """One record per market; event volume/24h volume carried down."""
     out = []
     for ev in events:
+        if sports_only and not is_sports_event(ev):
+            continue  # site is sports-only; politics/crypto/culture excluded
         ev_vol = _f(ev.get("volume"))
         ev_vol24 = _f(ev.get("volume24hr"))
         ev_liq = _f(ev.get("liquidity"))
@@ -317,7 +373,7 @@ def render_terminal(title, rows, screen):
         src = "P" if r["source"] == "poly" else "K"
         print(f"{_fmt_pct(r['yes'])} {move:>9} {_fmt_money(r['volume24h'])} "
               f"{_fmt_money(r['volume'])} {_fmt_days(r)} [{src}] {q}")
-    if screen == "movers":
+    if screen == "movers" and ENABLE_KALSHI:
         print("\nNote: Kalshi rows never appear here — its API exposes no price history.")
     print()
 
@@ -370,7 +426,7 @@ td.q{{max-width:560px}}a{{color:#7fb3ff;text-decoration:none}}
 .meta{{color:#8a93a3;margin-bottom:14px}}
 </style></head><body>
 <h1>🔮 Prediction-market screener</h1>
-<div class="meta">Generated {now} · Yes prices as % · P = Polymarket, K = Kalshi · click headers to sort</div>
+<div class="meta">Generated {now} · Yes prices as % · sports markets only · click headers to sort</div>
 {''.join(tabs)}
 {''.join(bodies)}
 <script>
@@ -417,7 +473,7 @@ def to_json(title, rows):
 # --------------------------------------------------------------------------
 
 def main():
-    ap = argparse.ArgumentParser(description="Prediction-market screener (Polymarket + Kalshi)")
+    ap = argparse.ArgumentParser(description="Prediction-market screener (Polymarket sports)")
     ap.add_argument("--screen", choices=list(SCREENS) + ["all"], default="volume",
                     help="which screen to run (default: volume)")
     ap.add_argument("--query", default="", help="keyword for --screen search")
@@ -427,7 +483,9 @@ def main():
     ap.add_argument("--min-volume24h", type=float, default=1000,
                     help="minimum 24h volume $ for movers/extremes (default: 1000)")
     ap.add_argument("--source", choices=["poly", "kalshi", "both"], default="both",
-                    help="data source (default: both)")
+                    help="data source (default: both; kalshi is parked unless ENABLE_KALSHI)")
+    ap.add_argument("--all-markets", action="store_true",
+                    help="disable the sports-only filter (analyze every category)")
     ap.add_argument("--json", action="store_true", help="emit JSON instead of tables")
     ap.add_argument("--html", action="store_true",
                     help="also write dashboard.html (runs all screens)")
@@ -438,13 +496,20 @@ def main():
     if args.screen == "search" and not args.query:
         ap.error("--screen search requires --query")
 
+    sports_only = SPORTS_ONLY and not args.all_markets
+
     recs = []
     if args.source in ("poly", "both"):
         print("Fetching Polymarket…", file=sys.stderr)
-        recs += normalize_polymarket(fetch_polymarket(args.max_events))
+        recs += normalize_polymarket(fetch_polymarket(args.max_events),
+                                     sports_only=sports_only)
     if args.source in ("kalshi", "both"):
-        print("Fetching Kalshi…", file=sys.stderr)
-        recs += normalize_kalshi(fetch_kalshi(args.max_markets))
+        if ENABLE_KALSHI:
+            print("Fetching Kalshi…", file=sys.stderr)
+            recs += normalize_kalshi(fetch_kalshi(args.max_markets))
+        else:
+            print("NOTE: Kalshi is parked (ENABLE_KALSHI=False) — skipping Kalshi fetch.",
+                  file=sys.stderr)
     print(f"Loaded {len(recs)} market records.", file=sys.stderr)
 
     names = list(SCREENS) if (args.screen == "all" or args.html) else [args.screen]
