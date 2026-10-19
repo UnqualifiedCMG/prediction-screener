@@ -1,0 +1,121 @@
+# Prediction-Market Screener
+
+A real, working screener for **Polymarket** and **Kalshi** — public APIs only,
+no auth, no credentials. Built for spotting what the money is saying (and
+where it's crowded), feeding @BetweenTheBids-style direction + reasoning.
+
+## Quick start
+
+```bash
+cd ~/workspace/prediction-screener
+python3 screener.py --screen volume --limit 20
+```
+
+Open the dashboard in a browser after any `--html` run:
+
+```bash
+python3 screener.py --screen all --html
+# then open dashboard.html
+```
+
+## Screens
+
+| Screen     | What it shows | Why it matters |
+|------------|---------------|----------------|
+| `volume`   | Highest-volume open markets | Liquidity = tradable, and volume is attention |
+| `closing`  | Expiring within 7 days, by volume | Resolution edge; mispriced tails get found here |
+| `movers`   | Biggest 24h price moves (needs real volume) | Something just changed — find out what |
+| `extremes` | Priced ≥90% or ≤10% with high 24h volume | Crowded consensus trades; great content fuel ("everyone thinks X is a lock — is it?") |
+| `new`      | Listed in the last 48h | Fresh narratives before the crowd prices them |
+| `search`   | Keyword filter (`--query "Fed"`) | Track one story across both books |
+
+## Options
+
+```
+--screen {volume,closing,movers,extremes,new,search,all}
+--query TEXT        keyword for the search screen
+--limit N           rows per screen (default: 20)
+--min-volume $      floor on total volume (default: 1000)
+--min-volume24h $   floor on 24h volume, for movers/extremes (default: 1000)
+--source {poly,kalshi,both}   (default: both)
+--json              machine-readable output (cron-friendly)
+--html              also write dashboard.html (sortable tables, all screens)
+--max-events N      Polymarket fetch cap (default: 2000)
+--max-markets N     Kalshi fetch cap (default: 1000)
+```
+
+Cron-friendly example (JSON to a file his other tooling can read):
+
+```bash
+python3 screener.py --screen extremes --json > /tmp/extremes.json
+```
+
+## Reading the output
+
+- **YES** — Yes price as a probability. `P` = Polymarket, `K` = Kalshi.
+- **24H MOVE** — percentage-point move in the last 24h (Polymarket only;
+  Kalshi's API doesn't expose price history).
+- **VOL 24H / VOL TOT** — event-level volume on Polymarket, market-level on Kalshi.
+- **CLOSES** — time until the market's end date.
+
+## Known API limitations (verified Oct 18, 2026)
+
+1. **Kalshi's markets endpoint is flooded with provisional multivariate
+   sports-combo scaffolds.** The screener filters them two ways: it only
+   requests markets closing 14+ days out, and drops provisional/MVE-leg
+   markets. Consequence: **near-term Kalshi markets (sports props, weekly
+   contracts) don't appear** — but those were never the point of this tool.
+2. **No Kalshi price history** — the movers screen is Polymarket-only.
+3. **Kalshi prices are bid/ask midpoints**, not last-trade prices.
+4. **Polymarket `volume24h` is event-level**, shared across that event's
+   markets; per-market 24h volume isn't exposed.
+5. Stale records (close date already passed but still listed as open) are
+   filtered out.
+
+## Backtesting (`backtest.py`)
+
+Answers "what % of markets that reach 90¢ actually resolve YES?" with real
+resolved-market data — Polymarket only (Kalshi's API exposes no price
+history, so "reached 90¢ at some point" is uncomputable there).
+
+```bash
+python3 backtest.py                      # 300 markets, $5k min volume, cached
+python3 backtest.py --markets 500 --min-volume 10000
+python3 backtest.py --refresh            # ignore cache, re-fetch everything
+python3 backtest.py --html               # also write backtest.html
+python3 backtest.py --json               # machine-readable output
+```
+
+What it does: pulls resolved binary Yes/No markets (gamma API,
+`closed=true`, ordered by close time), reads each one's final outcomePrices
+for the actual resolution, then walks its daily price history (CLOB
+`prices-history` on the Yes token) to find max/min price, final-week price,
+and time from first 90¢/10¢ touch to resolution. Everything is cached to
+`hidden_cache/` so reruns are instant.
+
+It reports: conditional resolution rates by price bucket (reached ≥90/80/70…%
+→ % resolved YES, and the ≤10/20/30…% mirror), final-week price bands, the
+"collapse split" (reached 90¢ but fell back below 80¢ vs held it), and median
+time from first touch to resolution. N is shown on every bucket.
+
+Headline finding from the first run (255 markets, Oct 18 2026): markets that
+reached ≥90¢ resolved YES 96.8% of the time (n=93) — **but** the median first
+touch of 90¢ was only 2.4 hours before resolution, i.e. after the outcome was
+effectively decided. It's hindsight, not a tradeable edge. The honest read
+and full caveats (daily sampling misses intraday spikes, selection bias,
+category base rates) are printed with every run.
+
+## Files
+
+- `screener.py` — the live screener. stdlib + `requests` only.
+- `backtest.py` — the backtest module. stdlib + `requests` only.
+- `dashboard.html` — generated by screener's `--html`; open it directly.
+- `backtest.html` — generated by backtest's `--html`; the stat tables.
+- `hidden_cache/` — raw API responses (closed events + per-token histories).
+  Delete or use `--refresh` to rebuild.
+- `README.md` — this file.
+
+## Politeness
+
+~0.35s pause between paged requests, 2 attempts per request, hard caps on
+pages fetched. Read-only — it never places orders or touches accounts.
