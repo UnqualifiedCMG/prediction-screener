@@ -144,7 +144,8 @@ def load_backtest_stats():
 # --------------------------------------------------------------------------
 
 NAV = [("index.html", "Dashboard"), ("markets.html", "Markets"),
-       ("stats.html", "Stats"), ("about.html", "About")]
+       ("stats.html", "Stats"), ("sports.html", "Sports"),
+       ("data.html", "Data"), ("about.html", "About")]
 
 
 def shell(title, active, body, fetched_note, gen_note):
