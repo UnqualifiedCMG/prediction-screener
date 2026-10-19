@@ -428,7 +428,7 @@ def fetch_polymarket_game(league, away_short, home_short, refresh=False):
                     result = {
                         "price_home": ph,
                         "volume": ev.get("volume"),
-                        "url": f"https://polymarket.com/event/{ev.get('slug')}",
+                        "url": f"https://polymarket.us/event/{ev.get('slug')}",
                         "title": title,
                     }
                     break
