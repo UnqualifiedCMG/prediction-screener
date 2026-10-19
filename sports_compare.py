@@ -37,6 +37,7 @@ import datetime as dt
 import html as htmlmod
 import json
 import os
+import re
 import sys
 import time
 
@@ -638,6 +639,73 @@ def totals_consensus(game_odds, maps, away_abbr, home_abbr):
     return sum(totals) / len(totals), len(totals)
 
 
+def book_lines(game_odds, maps, away_abbr, home_abbr):
+    """Per-book raw lines: {book_title: {ml_home, ml_away, spread_home, total}}.
+
+    Missing lines are simply absent — the renderer shows '—', never a guess.
+    """
+    away_full = maps["abbr"][away_abbr][1]
+    home_full = maps["abbr"][home_abbr][1]
+    books = {}
+    for ev in game_odds or []:
+        if ev.get("away_team") != away_full or ev.get("home_team") != home_full:
+            continue
+        for bm in ev.get("bookmakers", []):
+            title = bm.get("title") or bm.get("key") or "?"
+            entry = books.setdefault(title, {})
+            for mkt in bm.get("markets", []):
+                key = mkt.get("key")
+                outs = {o.get("name"): o for o in mkt.get("outcomes", [])}
+                if key == "h2h":
+                    if home_full in outs and outs[home_full].get("price") is not None:
+                        entry["ml_home"] = outs[home_full]["price"]
+                    if away_full in outs and outs[away_full].get("price") is not None:
+                        entry["ml_away"] = outs[away_full]["price"]
+                elif key == "spreads":
+                    o = outs.get(home_full)
+                    if o is not None and o.get("point") is not None:
+                        try:
+                            entry["spread_home"] = float(o["point"])
+                        except (TypeError, ValueError):
+                            pass
+                elif key == "totals":
+                    o = outs.get("Over")
+                    if o is not None and o.get("point") is not None:
+                        try:
+                            entry["total"] = float(o["point"])
+                        except (TypeError, ValueError):
+                            pass
+    return books
+
+
+def prob_to_american(p):
+    """De-vigged probability -> representative American odds. None if invalid."""
+    if p is None or p <= 0 or p >= 1:
+        return None
+    if p >= 0.5:
+        return round(-100 * p / (1 - p))
+    return round(100 * (1 - p) / p)
+
+
+def fmt_american(odds):
+    if odds is None:
+        return "—"
+    return f"{odds:+d}"
+
+
+def game_slug(league, away, home, date_iso):
+    """Stable URL slug for a game: same game -> same URL across refreshes."""
+    d = ""
+    if date_iso:
+        try:
+            d = dt.datetime.fromisoformat(
+                date_iso.replace("Z", "+00:00")).strftime("%Y%m%d")
+        except Exception:
+            pass
+    base = f"{league}-{away}-{home}" + (f"-{d}" if d else "")
+    return re.sub(r"[^a-z0-9-]", "", base.lower())
+
+
 # --------------------------------------------------------------------------
 # Comparison
 # --------------------------------------------------------------------------
@@ -694,13 +762,18 @@ def compare_league(league, api_key, threshold, spread_threshold=1.0, refresh=Fal
         row = {
             "league": league.upper(), "away": away, "home": home,
             "date": (g.get("date") or "")[:16].replace("T", " "),
+            "date_iso": g.get("date"),
+            "slug": game_slug(league, away, home, g.get("date")),
             "venue": g.get("venue"), "status": g.get("status"),
             "context": " · ".join(ctx) if ctx else None,
+            "injuries": inj, "n_inj": n_inj,
             "poly_home": poly["price_home"] if poly else None,
             "poly_url": poly["url"] if poly else None,
+            "poly_volume": poly["volume"] if poly else None,
             "kalshi_home": kal["price_home"] if kal else None,
             "books_home": round(cons, 4) if cons is not None else None,
             "n_books": n_books,
+            "books": book_lines(odds_data, maps, away, home) if odds_data else {},
             "spread_home": round(avg_spread, 1) if avg_spread is not None else None,
             "n_spread_books": n_spread_books,
             "spread_flags": spread_flags,
@@ -869,6 +942,244 @@ Free tiers only. Kalshi support parked. <a href="about.html">Methodology</a></p>
         f.write(page)
 
 
+# --------------------------------------------------------------------------
+# Dashboard (weekly games slate) + per-game detail pages
+# --------------------------------------------------------------------------
+GAMES_NAV = [("index.html", "Dashboard"), ("markets.html", "Markets"),
+             ("backtests.html", "Backtests"), ("sports.html", "Sports"),
+             ("fantasy.html", "Fantasy"), ("data.html", "Data"),
+             ("about.html", "About")]
+
+
+def games_shell(title, active, body, gen_note, prefix=""):
+    """Site shell shared by dashboard and game pages.
+
+    prefix: "" for pages in site/, "site/" for the repo-root dashboard,
+    "../" for pages in site/games/.
+    """
+    nav = "".join(
+        f'<a href="{prefix}{h}" class="{"on" if h == active else ""}">{l}</a>'
+        for h, l in GAMES_NAV)
+    return f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{htmlmod.escape(title)} — PolyScope</title>
+<link rel="stylesheet" href="{prefix}styles.css"></head>
+<body>
+<header class="site-header"><div class="wrap head-row">
+<a class="brand" href="{prefix}index.html">◈ Poly<span>Scope</span></a>
+<nav>{nav}</nav></div></header>
+<main class="wrap">
+<div class="freshness">📡 Data as of {gen_note} · scheduled snapshot —
+reload for the latest rebuild. Informational only — not betting advice.
+21+. Gambling problem? Call 1-800-GAMBLER.</div>
+{body}
+</main>
+<footer class="wrap foot">PolyScope · public API data only · for research,
+not financial advice. Nothing here is a recommendation to trade or bet.</footer>
+</body></html>"""
+
+
+def _ml_cell(r):
+    if r["books_home"] is None:
+        return "—"
+    am = prob_to_american(r["books_home"])
+    return f"{r['books_home'] * 100:.1f}% ({fmt_american(am)})"
+
+
+def _game_link(r, game_prefix):
+    return (f"<a href='{game_prefix}{r['slug']}.html'>"
+            f"<b>{r['away']} @ {r['home']}</b></a>")
+
+
+def _signal_cell(r):
+    parts = []
+    for src, d in r["divs"].items():
+        if abs(d) >= 0.03:
+            side = "market" if d > 0 else "books"
+            parts.append(f"🚩 ML: {side} +{abs(d) * 100:.1f}pp ({src})")
+    for f in r["spread_flags"]:
+        parts.append(f"🚩 spread: {f['book']} {f['point']:+.1f}")
+    return "<br>".join(parts) if parts else '<span style="color:#6b7482">—</span>'
+
+
+def dashboard_body(all_leagues, game_prefix):
+    """The weekly slate: every game, per league, clickable into detail pages."""
+    parts = []
+    total = sum(len(res["rows"]) for res in all_leagues.values())
+    parts.append(f"<h1>This week's games <span class='count'>({total})</span></h1>")
+    for league, res in all_leagues.items():
+        parts.append(f"<h2>{league.upper()} <span class='count'>"
+                     f"({res['n_games']} games)</span></h2>")
+        if not res["rows"]:
+            parts.append("<p>No games this week — league is out of season or "
+                         "none are scheduled.</p>")
+            continue
+        ordered = sorted(res["rows"], key=lambda r: (r["date"] or ""))
+        rows = []
+        for r in ordered:
+            s = f"{r['spread_home']:+.1f}" if r["spread_home"] is not None else "—"
+            t = f"{r['total']:.1f}" if r["total"] is not None else "—"
+            p = f"{r['poly_home'] * 100:.1f}%" if r["poly_home"] is not None else "—"
+            rows.append(
+                f"<tr><td>{_game_link(r, game_prefix)}</td>"
+                f"<td class='dim'>{htmlmod.escape(r['date'] or '')}</td>"
+                f"<td class='num'>{_ml_cell(r)}</td>"
+                f"<td class='num'>{s}</td>"
+                f"<td class='num'>{t}</td>"
+                f"<td class='num'>{p}</td>"
+                f"<td>{_signal_cell(r)}</td></tr>")
+        parts.append(
+            "<div class='tbl-wrap'><table><thead><tr>"
+            "<th>Game</th><th>Start (UTC)</th><th>Avg moneyline (home)</th>"
+            "<th>Avg spread</th><th>Total</th><th>Polymarket</th><th>Signals</th>"
+            "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>")
+    return "".join(parts)
+
+
+def render_dashboard(all_leagues, gen_note, site_index_path, root_index_path):
+    """Write the dashboard to site/index.html and the repo-root index.html."""
+    body = dashboard_body(all_leagues, game_prefix="games/")
+    with open(site_index_path, "w") as f:
+        f.write(games_shell("Dashboard", "index.html", body, gen_note, prefix=""))
+    print(f"wrote {site_index_path}", file=sys.stderr)
+
+    # Repo-root copy: same dashboard, links rewritten under site/...
+    root_body = dashboard_body(all_leagues, game_prefix="site/games/")
+    root_page = games_shell("Dashboard", "index.html", root_body, gen_note,
+                            prefix="site/")
+    with open(root_index_path, "w") as f:
+        f.write(root_page)
+    print(f"wrote {root_index_path} (dashboard as landing)", file=sys.stderr)
+
+
+def _book_row(book, lines):
+    ml_h = fmt_american(lines.get("ml_home"))
+    ml_a = fmt_american(lines.get("ml_away"))
+    sp = f"{lines['spread_home']:+.1f}" if "spread_home" in lines else "—"
+    tot = f"{lines['total']:.1f}" if "total" in lines else "—"
+    return (f"<tr><td><b>{htmlmod.escape(book)}</b></td>"
+            f"<td class='num'>{ml_h}</td><td class='num'>{ml_a}</td>"
+            f"<td class='num'>{sp}</td><td class='num'>{tot}</td></tr>")
+
+
+def render_game_page(r, gen_note):
+    """Full detail for one game. Every number traces to a live pull;
+    missing data renders as '—', never a guess."""
+    title = f"{r['away']} @ {r['home']}"
+    parts = [f"<h1>{title} <span class='count'>{r['league']}</span></h1>",
+             f"<p class='sub'>{htmlmod.escape(r['date'] or '')} UTC"
+             + (f" · {htmlmod.escape(r['venue'])}" if r.get("venue") else "")
+             + (f" · {htmlmod.escape(r['status'])}" if r.get("status") else "")
+             + "</p>"]
+
+    # Consensus snapshot
+    am = prob_to_american(r["books_home"])
+    cons_rows = [
+        ("Books ML (home, de-vigged)",
+         f"{r['books_home'] * 100:.1f}% ({fmt_american(am)})"
+         if r["books_home"] is not None else "—",
+         f"{r['n_books']} books"),
+        ("Avg spread (home)",
+         f"{r['spread_home']:+.1f}" if r["spread_home"] is not None else "—",
+         f"{r['n_spread_books']} books"),
+        ("Avg total",
+         f"{r['total']:.1f}" if r["total"] is not None else "—", ""),
+    ]
+    if r["poly_home"] is not None:
+        plink = (f"<a href='{htmlmod.escape(r['poly_url'])}' target='_blank' "
+                 f"rel='noopener'>{r['poly_home'] * 100:.1f}%</a>"
+                 if r.get("poly_url") else f"{r['poly_home'] * 100:.1f}%")
+        vol = f"${r['poly_volume']:,.0f}" if r.get("poly_volume") else "—"
+        cons_rows.append(("Polymarket (home)", plink, f"vol {vol}"))
+    else:
+        cons_rows.append(("Polymarket (home)", "—", "no moneyline market found"))
+    parts.append("<div class='tbl-wrap'><table><thead><tr><th>Consensus</th>"
+                 "<th>Value</th><th></th></tr></thead><tbody>" +
+                 "".join(f"<tr><td>{k}</td><td class='num'><b>{v}</b></td>"
+                         f"<td class='dim'>{n}</td></tr>"
+                         for k, v, n in cons_rows) + "</tbody></table></div>")
+
+    # Per-book lines
+    parts.append("<h2>Lines by sportsbook</h2>")
+    if r["books"]:
+        brow = "".join(_book_row(b, r["books"][k])
+                       for b, k in sorted(r["books"].items()))
+        parts.append("<div class='tbl-wrap'><table><thead><tr><th>Book</th>"
+                     "<th>ML home</th><th>ML away</th><th>Spread (home)</th>"
+                     "<th>Total</th></tr></thead><tbody>" + brow +
+                     "</tbody></table></div>")
+    else:
+        parts.append("<p>Sportsbook lines unavailable in this snapshot "
+                     "(no Odds API key or quota exhausted).</p>")
+
+    # Divergence analysis
+    parts.append("<h2>Divergence analysis</h2>")
+    dparts = []
+    for src, d in r["divs"].items():
+        side = "prediction market" if d > 0 else "sportsbooks"
+        dparts.append(f"<li><b>{src}</b>: {side} higher by "
+                      f"{abs(d) * 100:.1f}pp on the home team</li>")
+    for f in r["spread_flags"]:
+        dparts.append(f"<li><b>Spread watch</b>: {htmlmod.escape(f['book'])} "
+                      f"posts {f['point']:+.1f} ({f['off']:+.1f} off consensus)</li>")
+    parts.append("<ul>" + ("".join(dparts) if dparts
+                            else "<li>No divergences flagged at current thresholds.</li>")
+                 + "</ul>")
+
+    # Context: records, injuries, weather
+    parts.append("<h2>Game context</h2>")
+    cparts = []
+    if r.get("context"):
+        cparts.append(f"<li>{htmlmod.escape(r['context'])}</li>")
+    if r.get("injuries"):
+        cparts.append("<li>Key injuries: " +
+                      htmlmod.escape("; ".join(r["injuries"][:4])) + "</li>")
+    parts.append("<ul>" + ("".join(cparts) if cparts
+                            else "<li>No context available.</li>") + "</ul>")
+
+    # Fantasy-relevant signals
+    parts.append("<h2>Fantasy signals</h2>")
+    fparts = []
+    if r["total"] is not None:
+        fparts.append(f"<li>Implied total {r['total']:.1f} — "
+                      + ("high-scoring environment" if r["total"] >= 47
+                         else "average" if r["total"] >= 43 else "low-scoring"))
+    if r["spread_home"] is not None:
+        fparts.append(f"<li>Spread {r['spread_home']:+.1f} — "
+                      + ("projected close game" if abs(r["spread_home"]) <= 3
+                         else "blowout risk: starters may sit late"))
+    if r.get("n_inj"):
+        fparts.append(f"<li>{r['n_inj']} Q/D/Out injuries — usage bumps likely "
+                      "for replacements</li>")
+    parts.append("<ul>" + ("".join(fparts) if fparts
+                            else "<li>Insufficient data for fantasy signals.</li>")
+                 + "</ul>")
+
+    body = "".join(parts)
+    # Game pages are reached from the Dashboard, so it stays the active tab.
+    return games_shell(f"{title} ({r['league']})", "index.html", body,
+                       gen_note, prefix="../")
+
+
+def render_game_pages(all_leagues, games_dir, gen_note):
+    """One static page per game. Dir is wiped first so stale games leave
+    no orphan pages and no dashboard link ever rots."""
+    os.makedirs(games_dir, exist_ok=True)
+    for f in os.listdir(games_dir):
+        if f.endswith(".html"):
+            os.remove(os.path.join(games_dir, f))
+    n = 0
+    for league, res in all_leagues.items():
+        for r in res["rows"]:
+            path = os.path.join(games_dir, r["slug"] + ".html")
+            with open(path, "w") as f:
+                f.write(render_game_page(r, gen_note))
+            n += 1
+    print(f"wrote {n} game pages to {games_dir}", file=sys.stderr)
+    return n
+
+
 # Fixture test (no network)
 # --------------------------------------------------------------------------
 def fixture_test():
@@ -997,6 +1308,11 @@ def main():
         out = os.path.join(BASE, "site", "sports.html")
         render_html(all_res, args.threshold, args.spread_threshold, out)
         print(f"\nwrote {out}", file=sys.stderr)
+        gen = NOW.strftime("%Y-%m-%d %H:%M UTC")
+        render_dashboard(all_res, gen,
+                         os.path.join(BASE, "site", "index.html"),
+                         os.path.join(BASE, "index.html"))
+        render_game_pages(all_res, os.path.join(BASE, "site", "games"), gen)
 
 
 if __name__ == "__main__":
