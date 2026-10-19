@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backtests — PolyScope</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.article{max-width:760px}
+.article h1{font-size:28px;margin-bottom:4px}
+.article .dateline{color:#8b98a5;font-size:13px;margin-bottom:28px}
+.article h2{font-size:21px;margin-top:44px;color:#e7e9ea}
+.article p{line-height:1.7;color:#c3ccd6}
+.article .takeaway{background:#14202e;border-left:3px solid #1d9bf0;padding:12px 18px;margin:20px 0;border-radius:0 8px 8px 0}
+.article .takeaway p{margin:0;color:#e7e9ea}
+.article table{margin:18px 0}
+.bigstat{font-size:40px;font-weight:700;color:#8fe388;margin:8px 0 2px}
+.bigstat.dim{color:#e7e9ea}
+.caption{color:#8b98a5;font-size:12px;margin-top:6px}
+hr.sep{border:none;border-top:1px solid #2f3b4d;margin:40px 0}
+.stub{background:#1a2332;border:1px dashed #2f3b4d;border-radius:8px;padding:16px 20px;margin:14px 0}
+.stub h3{margin:0 0 6px;font-size:15px;color:#aab4c0}
+.stub p{margin:0;font-size:13px}
+</style>
+</head><body>
+<header class="site-header"><div class="wrap head-row">
+<a class="brand" href="index.html">◈ Poly<span>Scope</span></a>
+<nav><a href="index.html">Dashboard</a><a href="markets.html">Markets</a><a href="backtests.html" class="on">Backtests</a><a href="sports.html">Sports</a><a href="fantasy.html">Fantasy</a><a href="data.html">Data</a><a href="about.html">About</a></nav>
+</div></header>
+<main class="wrap article">
+<div class="dateline">📡 Research notebook · data from 1,490 resolved Polymarket markets · last run 2026-10-18 · informational only, not betting advice</div>
+
+<h1>Do the crowd's extremes resolve?</h1>
+<p>A prediction market priced at 90¢ is the crowd saying "this is 90% likely."
+Is the crowd right 90% of the time? We pulled every resolved Polymarket market
+we could get price history for — <b>1,490 markets</b>, minimum $1,000 volume,
+daily price samples — and checked. Note: this backtest covers <b>all market
+categories</b> (sports, politics, crypto), not just sports. A sports-only
+backtest is on the roadmap.</p>
+
+<hr class="sep">
+
+<h2>1. Markets that touch 90¢ resolve YES 92% of the time</h2>
+<p class="bigstat">92.3% <span style="font-size:16px;color:#8b98a5">(n=736)</span></p>
+<p>Of 736 markets that traded at or above 90¢ at any point, 679 resolved YES.
+The mirror image holds too: markets that touched 10¢ resolved NO 91.2% of the
+time (n=889). The full ladder:</p>
+<table><thead><tr><th>Reached ≥</th><th>N</th><th>Resolved YES</th><th>Reached ≤</th><th>N</th><th>Resolved NO</th></tr></thead>
+<tbody>
+<tr><td>≥50%</td><td>1,219</td><td>55.7%</td><td>≤50%</td><td>1,321</td><td>61.4%</td></tr>
+<tr><td>≥60%</td><td>1,020</td><td>66.6%</td><td>≤40%</td><td>1,168</td><td>69.4%</td></tr>
+<tr><td>≥70%</td><td>913</td><td>74.4%</td><td>≤30%</td><td>1,066</td><td>76.1%</td></tr>
+<tr><td>≥80%</td><td>808</td><td>84.0%</td><td>≤20%</td><td>964</td><td>84.1%</td></tr>
+<tr><td>≥90%</td><td>736</td><td><b>92.3%</b></td><td>≤10%</td><td>889</td><td><b>91.2%</b></td></tr>
+<tr><td>≥95%</td><td>712</td><td>95.4%</td><td>≤5%</td><td>853</td><td>95.1%</td></tr>
+</tbody></table>
+<p class="caption">Calibration looks roughly right: higher prices → higher hit rates, symmetric on both sides. The crowd isn't systematically overconfident at the extremes.</p>
+<div class="takeaway"><p><b>Takeaway:</b> extreme prices are usually right — but "usually right at 90¢" is only useful if you can buy <i>below</i> 90¢. Which brings us to the catch.</p></div>
+
+<hr class="sep">
+
+<h2>2. The signal isn't touching 90¢ — it's <i>holding</i> it</h2>
+<p>Split the 736 markets that touched 90¢ by where they sat in the final week:</p>
+<table><thead><tr><th>Group</th><th>N</th><th>Resolved YES</th></tr></thead>
+<tbody>
+<tr><td>Touched 90¢, still ≥80¢ in final week</td><td>677</td><td class="bigstat dim" style="font-size:20px">100.0%</td></tr>
+<tr><td>Touched 90¢, collapsed below 80¢</td><td>59</td><td class="bigstat dim" style="font-size:20px">3.4%</td></tr>
+</tbody></table>
+<p>Every single market that reached 90¢ and held above 80¢ into the final week
+resolved YES — 677 for 677. And of the 59 that touched 90¢ but collapsed back
+below 80¢, only 2 resolved YES. The collapse is the signal: when a 90¢ market
+starts sliding, the crowd is telling you something changed.</p>
+<div class="takeaway"><p><b>Takeaway:</b> don't buy at 90¢ — watch for markets that touched 90¢ and are <i>slipping</i>. A breakdown below 80¢ after touching 90¢ resolved NO 96.6% of the time. That's the tradeable shape, not the headline number.</p></div>
+
+<hr class="sep">
+
+<h2>3. The hindsight problem</h2>
+<p>Here's why the 92.3% isn't free money. The median time from a market's
+<b>first touch of 90¢ to resolution was 2.4 hours</b> (n=736; mean 0.2 days).
+For the 10¢ touch: median 2.4 hours as well (n=890).</p>
+<p>2.4 hours before resolution, the outcome is usually already decided — the
+goal has been scored, the vote counted, the announcement made. The market
+isn't predicting at 90¢; it's <i>reporting</i>. The 92.3% is mostly hindsight,
+not edge.</p>
+<div class="takeaway"><p><b>Takeaway:</b> by the time a market prints 90¢, the information is public and the edge is gone. The real game is getting in <i>before</i> the crowd moves it there — which is what the Sports tab's divergence leaderboard tries to catch from the other direction.</p></div>
+
+<hr class="sep">
+
+<h2>Honest caveats</h2>
+<p>Daily price samples miss intraday spikes — a market that briefly touched 90¢
+between samples counts as never reaching it. Only markets the API still lists
+are analyzed; deleted or voided markets are excluded, which can inflate hit
+rates (selection bias). These are unconditional averages across all categories —
+sports, politics, crypto — and base rates differ wildly by category. Buckets
+with small N are noise, not signal. Polymarket only: Kalshi has no
+price-history API, so its markets can't be analyzed this way.</p>
+
+<hr class="sep">
+
+<h2>Coming next</h2>
+<div class="stub"><h3>📐 Calibration curves by price bucket</h3>
+<p>Do 70¢ markets resolve YES exactly 70% of the time, or does the crowd run hot/cold in specific bands? A full calibration curve with confidence intervals.</p></div>
+<div class="stub"><h3>🏈 Category-level mispricing</h3>
+<p>Sports vs politics vs crypto: where are the base rates actually different? If sports markets at 80¢ hit 88% but politics at 80¢ hits 79%, that's a tradeable distinction.</p></div>
+<div class="stub"><h3>⏳ Time-decay of the edge</h3>
+<p>Does buying at 80¢ a week out beat buying at 90¢ an hour out? Mapping hit rate against time-to-resolution to find where the crowd is slowest to update.</p></div>
+
+</main>
+<footer class="wrap"><p>PolyScope · public API data only · for research, not financial advice.
+Nothing here is a recommendation to trade. 21+ · 1-800-GAMBLER.</p></footer>
+</body></html>
