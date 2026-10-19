@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="styles.css">
 <style>
 tr.flag td { background: #2a2118; } .ctx { font-size: 12px; color: #8b98a5; }
-.dim { color: #8b98a5; font-size: 12px; } .lede { color: #8b98a5; }
+.dim { color: #8b98a5; font-size: 12px; }
 .method li { margin-bottom: 6px; color: #aab4c0; }
 details { margin-top: 16px; } summary { cursor: pointer; color: #1d9bf0; }
 .notice { background: #1a2332; border: 1px solid #2f3b4d; border-radius: 8px;
@@ -17,19 +17,23 @@ padding: 12px 16px; margin: 16px 0; font-size: 13px; color: #8b98a5; }
 <nav><a href="index.html">Dashboard</a><a href="markets.html">Markets</a><a href="backtests.html">Backtests</a><a href="sports.html">Sports</a><a href="fantasy.html">Fantasy</a><a href="data.html">Data</a><a href="about.html">About</a></nav></div></header>
 <main class="wrap">
 <div class="notice">🔞 21+. Informational only — not betting advice. Prices move; verify before acting. 21+. Gambling problem? Call 1-800-GAMBLER.</div>
-<div class='notice'>⚠️ Sportsbook odds unavailable in this build (no Odds API key or quota exhausted) — showing prediction-market prices only. Divergences need book consensus.</div><div class="freshness">📡 Sports snapshot generated 2026-10-19 01:01 UTC ·
+<div class="freshness">📡 Sports snapshot generated 2026-10-19 02:36 UTC ·
 odds cached (free-tier friendly: refreshes ≤2x/day) · Informational only — not betting advice. Prices move; verify before acting. 21+. Gambling problem? Call 1-800-GAMBLER.</div>
 <h1>Sports: markets vs books</h1>
 <h2>Methodology</h2>
 <ul class="method">
-<li>Sportsbook odds → implied probability per book, de-vigged by dividing each side
+<li>Moneyline: sportsbook odds → implied probability per book, de-vigged by dividing each side
 by the overround (basic normalization). Consensus = mean de-vigged home-win probability across books.</li>
-<li>Polymarket: Yes-token price on the game moneyline market.</li>
+<li>Spread: mean of each book's home-team point spread. Books sitting ≥ 1.0 point
+off the cross-book average are flagged — a book disagreeing with the market on the number.</li>
+<li>Total: mean over/under line across books.</li>
+<li>Polymarket: Yes-token price on the game moneyline market. (Kalshi support is parked —
+its sports data is too thin to be useful right now.)</li>
 <li>Team matching is conservative — a game only appears when both teams resolve through
 the canonical table; anything ambiguous is listed as unmatched, never guessed.</li>
 <li>Context: ESPN records/injuries + Open-Meteo weather for outdoor NFL games. Free sources only.</li>
-</ul><h2>NFL — divergence leaderboard (0 flagged / 1 games)</h2><p>No divergences above threshold right now.</p><details><summary>All compared games (1 below threshold)</summary><table><tr><th>Game</th><th>Books</th><th>Poly</th><th>Max gap</th></tr><tr><td>WAS @ SF</td><td>n/a</td><td>78.5%</td><td>50.3%</td><td>0.0pp</td></tr></table></details><h2>NBA — divergence leaderboard (0 flagged / 3 games)</h2><p>No divergences above threshold right now.</p><details><summary>All compared games (3 below threshold)</summary><table><tr><th>Game</th><th>Books</th><th>Poly</th><th>Max gap</th></tr><tr><td>BOS @ DET</td><td>n/a</td><td>48.5%</td><td>50.0%</td><td>0.0pp</td></tr><tr><td>PHI @ NY</td><td>n/a</td><td>62.5%</td><td>n/a</td><td>0.0pp</td></tr><tr><td>OKC @ SA</td><td>n/a</td><td>55.5%</td><td>n/a</td><td>0.0pp</td></tr></table></details>
+</ul><h2>NFL — this week's games (1 games, 0 flagged)</h2><table><tr><th>Game</th><th>Start (UTC)</th><th>Books ML (home)</th><th>Avg spread</th><th>Total</th><th>Polymarket</th><th>ML gap</th><th>Spread watch</th><th>Context</th></tr><tr><td><b>WAS @ SF</b></td><td class='dim'>2026-10-20 00:15</td><td>77.6%<br><span class='dim'>9 books</span></td><td>-7.6</td><td>52.0</td><td><a href='https://polymarket.us/event/nfl-was-sf-2026-10-20' target='_blank' rel='noopener'>78.5%</a></td><td>poly: market higher by 0.9pp</td><td class='ctx'>—</td><td class='ctx'>WAS 1-3-1 @ SF 5-0 · 19 Q/D/Out inj: Javontae Jean-Baptiste (LB, Out); Charles Omenihu (DE, Out) · 60F, 0% precip, 12mph wind</td></tr></table><h2>NBA — this week's games (3 games, 2 flagged)</h2><table><tr><th>Game</th><th>Start (UTC)</th><th>Books ML (home)</th><th>Avg spread</th><th>Total</th><th>Polymarket</th><th>ML gap</th><th>Spread watch</th><th>Context</th></tr><tr class='flag'><td><b>BOS @ DET</b></td><td class='dim'>2026-10-20 19:00</td><td>49.7%<br><span class='dim'>6 books</span></td><td>-0.1</td><td>222.0</td><td><a href='https://polymarket.us/event/nba-bos-det-2026-10-20' target='_blank' rel='noopener'>48.5%</a></td><td>poly: books higher by 1.2pp</td><td class='ctx'>FanDuel -1.5 (-1.4 off)<br>DraftKings +1.5 (+1.6 off)<br>MyBookie.ag +1.0 (+1.1 off)</td><td class='ctx'>BOS 0-0 @ DET 0-0 · 1 Q/D/Out inj: Devin Carter (G, Out)</td></tr><tr class='flag'><td><b>OKC @ SA</b></td><td class='dim'>2026-10-21 01:30</td><td>56.0%<br><span class='dim'>8 books</span></td><td>-2.5</td><td>231.6</td><td><a href='https://polymarket.us/event/nba-okc-sas-2026-10-20' target='_blank' rel='noopener'>55.5%</a></td><td>poly: books higher by 0.5pp</td><td class='ctx'>BetRivers -1.5 (+1.0 off)</td><td class='ctx'>OKC 0-0 @ SA 0-0 · 2 Q/D/Out inj: Otega Oweh (G, Out); Jayden Quaintance (F, Out)</td></tr><tr><td><b>PHI @ NY</b></td><td class='dim'>2026-10-20 23:00</td><td>62.6%<br><span class='dim'>8 books</span></td><td>-4.9</td><td>232.0</td><td><a href='https://polymarket.us/event/nba-phi-nyk-2026-10-20' target='_blank' rel='noopener'>62.5%</a></td><td>poly: books higher by 0.1pp</td><td class='ctx'>—</td><td class='ctx'>PHI 0-0 @ NY 0-0 · 1 Q/D/Out inj: Ariel Hukporti (C, Out)</td></tr></table><h2>MLB — this week's games (0 games, 0 flagged)</h2><p>No games this week — league is out of season or none are scheduled.</p>
 </main>
 <footer class="wrap"><p>Data: Polymarket · The Odds API · ESPN · Open-Meteo.
-Free tiers only. <a href="about.html">Methodology</a></p></footer>
+Free tiers only. Kalshi support parked. <a href="about.html">Methodology</a></p></footer>
 </body></html>
