@@ -201,6 +201,11 @@ ODDS_TTL = 12 * 3600     # refresh sportsbook odds at most twice a day
 CONTEXT_TTL = 6 * 3600   # ESPN / weather cache
 KALSHI_TTL = 2 * 3600
 
+# Kalshi is parked: its sports data is too thin to be useful right now.
+# All Kalshi fetch/match/display code below is intact — set to True to
+# bring it back if their data situation improves.
+ENABLE_KALSHI = False
+
 
 def build_maps(league):
     teams = LEAGUES[league]["teams"]
@@ -511,8 +516,12 @@ ODDS_QUOTA = {"remaining": None, "used": None}
 
 
 def fetch_odds(league, api_key, refresh=False):
-    """Sportsbook h2h odds via The Odds API. Cached 12h; records quota headers."""
-    key = f"odds_{league}.json"
+    """Sportsbook h2h odds + spreads + totals via The Odds API.
+
+    One call per league returns all three markets (same quota cost).
+    Cached 12h; records quota headers.
+    """
+    key = f"odds3_{league}.json"
     if not refresh:
         hit = cache_get(key, ODDS_TTL)
         if hit is not None:
@@ -522,7 +531,7 @@ def fetch_odds(league, api_key, refresh=False):
     sport = LEAGUES[league]["odds"]
     r = requests.get(f"{ODDS_API}/sports/{sport}/odds",
                      params={"apiKey": api_key, "regions": "us",
-                             "markets": "h2h", "oddsFormat": "american"},
+                             "markets": "h2h,spreads,totals", "oddsFormat": "american"},
                      timeout=30)
     ODDS_QUOTA["remaining"] = r.headers.get("x-requests-remaining")
     ODDS_QUOTA["used"] = r.headers.get("x-requests-used")
@@ -576,14 +585,68 @@ def book_consensus(game_odds, maps, away_abbr, home_abbr):
     return sum(probs) / len(probs), len(probs)
 
 
+def _market_outcomes(game_odds, maps, away_abbr, home_abbr, market_key):
+    """Yield (book_title, outcomes_dict) for one market across books."""
+    away_full = maps["abbr"][away_abbr][1]
+    home_full = maps["abbr"][home_abbr][1]
+    for ev in game_odds or []:
+        if ev.get("away_team") != away_full or ev.get("home_team") != home_full:
+            continue
+        for bm in ev.get("bookmakers", []):
+            for mkt in bm.get("markets", []):
+                if mkt.get("key") != market_key:
+                    continue
+                outs = {o.get("name"): o for o in mkt.get("outcomes", [])}
+                yield (bm.get("title") or bm.get("key"), outs)
+                break  # one market of this type per book
+
+
+def spread_consensus(game_odds, maps, away_abbr, home_abbr):
+    """Mean home-team point spread across books.
+
+    Returns (avg_spread, {book: point}, n_books). Negative = home favored.
+    """
+    away_full = maps["abbr"][away_abbr][1]
+    home_full = maps["abbr"][home_abbr][1]
+    pts = {}
+    for book, outs in _market_outcomes(game_odds, maps, away_abbr, home_abbr, "spreads"):
+        o = outs.get(home_full)
+        if o is not None and o.get("point") is not None:
+            try:
+                pts[book] = float(o["point"])
+            except (TypeError, ValueError):
+                pass
+    if not pts:
+        return None, {}, 0
+    return sum(pts.values()) / len(pts), pts, len(pts)
+
+
+def totals_consensus(game_odds, maps, away_abbr, home_abbr):
+    """Mean over/under line across books. Returns (avg_total, n_books)."""
+    away_full = maps["abbr"][away_abbr][1]
+    home_full = maps["abbr"][home_abbr][1]
+    totals = []
+    for book, outs in _market_outcomes(game_odds, maps, away_abbr, home_abbr, "totals"):
+        o = outs.get("Over")
+        if o is not None and o.get("point") is not None:
+            try:
+                totals.append(float(o["point"]))
+            except (TypeError, ValueError):
+                pass
+    if not totals:
+        return None, 0
+    return sum(totals) / len(totals), len(totals)
+
+
 # --------------------------------------------------------------------------
 # Comparison
 # --------------------------------------------------------------------------
-def compare_league(league, api_key, threshold, refresh=False):
+def compare_league(league, api_key, threshold, spread_threshold=1.0, refresh=False):
     maps = build_maps(league)
     games = fetch_espn_games(league, maps, refresh)
     injuries = fetch_espn_injuries(league, maps, refresh)
-    kalshi = fetch_kalshi_games(league, refresh)
+    # Kalshi is parked — skip the fetch entirely; matching code stays dormant.
+    kalshi = fetch_kalshi_games(league, refresh) if ENABLE_KALSHI else {}
     odds_data, odds_cached = fetch_odds(league, api_key, refresh)
 
     rows, unmatched = [], []
@@ -596,8 +659,20 @@ def compare_league(league, api_key, threshold, refresh=False):
         home_short = maps["abbr"][home][2]
 
         poly = fetch_polymarket_game(league, away_short, home_short, refresh)
-        kal = match_kalshi_game(kalshi, maps, away, home)
+        kal = match_kalshi_game(kalshi, maps, away, home) if ENABLE_KALSHI else None
         cons, n_books = book_consensus(odds_data, maps, away, home) if odds_data else (None, 0)
+        avg_spread, book_spreads, n_spread_books = (
+            spread_consensus(odds_data, maps, away, home) if odds_data else (None, {}, 0))
+        avg_total, n_total_books = (
+            totals_consensus(odds_data, maps, away, home) if odds_data else (None, 0))
+
+        # spread divergence: books sitting >= spread_threshold off the consensus
+        spread_flags = []
+        if avg_spread is not None:
+            for book, pt in book_spreads.items():
+                if abs(pt - avg_spread) >= spread_threshold:
+                    spread_flags.append({"book": book, "point": round(pt, 1),
+                                         "off": round(pt - avg_spread, 1)})
 
         # context line
         inj = injuries.get(away, {}).get("notable", []) + injuries.get(home, {}).get("notable", [])
@@ -626,16 +701,20 @@ def compare_league(league, api_key, threshold, refresh=False):
             "kalshi_home": kal["price_home"] if kal else None,
             "books_home": round(cons, 4) if cons is not None else None,
             "n_books": n_books,
+            "spread_home": round(avg_spread, 1) if avg_spread is not None else None,
+            "n_spread_books": n_spread_books,
+            "spread_flags": spread_flags,
+            "total": round(avg_total, 1) if avg_total is not None else None,
         }
         divs = {}
         if cons is not None and poly:
             divs["poly"] = round(poly["price_home"] - cons, 4)
-        if cons is not None and kal:
+        if ENABLE_KALSHI and cons is not None and kal:
             divs["kalshi"] = round(kal["price_home"] - cons, 4)
         row["divs"] = divs
         row["max_div"] = max((abs(v) for v in divs.values()), default=0)
-        row["flagged"] = row["max_div"] >= threshold and bool(divs)
-        if poly is None and kal is None and cons is None:
+        row["flagged"] = (row["max_div"] >= threshold and bool(divs)) or bool(spread_flags)
+        if poly is None and cons is None:
             unmatched.append({"game": f"{away} @ {home}",
                               "reason": "no market data from any source"})
         else:
@@ -658,23 +737,28 @@ DISCLAIMER = ("Informational only — not betting advice. Prices move; verify be
               "21+. Gambling problem? Call 1-800-GAMBLER.")
 
 
-def render_terminal(all_leagues, threshold):
+def render_terminal(all_leagues, threshold, spread_threshold):
     for league, res in all_leagues.items():
-        print(f"\n{'='*78}\n{league.upper()} — divergence >= {threshold*100:.0f}pp "
-              f"({res['n_games']} games, {sum(1 for r in res['rows'] if r['flagged'])} flagged)")
+        print(f"\n{'='*78}\n{league.upper()} — {res['n_games']} games, "
+              f"{sum(1 for r in res['rows'] if r['flagged'])} flagged "
+              f"(ML div >= {threshold*100:.0f}pp or spread off >= {spread_threshold:.1f})")
         print("INFORMATIONAL ONLY — not betting advice. 21+. 1-800-GAMBLER.\n")
-        flagged = sorted([r for r in res["rows"] if r["flagged"]],
-                         key=lambda r: -r["max_div"])
-        if not flagged:
-            print("  no divergences above threshold")
-        for r in flagged:
+        if not res["rows"]:
+            print("  no games this week (out of season or none scheduled)")
+            continue
+        for r in sorted(res["rows"], key=lambda r: (-r["max_div"], r["date"] or "")):
             b = f"{r['books_home']*100:.1f}%" if r["books_home"] is not None else "n/a"
             p = f"{r['poly_home']*100:.1f}%" if r["poly_home"] is not None else "n/a"
-            k = f"{r['kalshi_home']*100:.1f}%" if r["kalshi_home"] is not None else "n/a"
-            print(f"  {r['away']} @ {r['home']}  ({r['date']})")
-            print(f"    books(home) {b} [{r['n_books']} books] | Poly {p} | Kalshi {k}")
+            s = (f"{r['spread_home']:+.1f}" if r["spread_home"] is not None else "n/a")
+            t = f"{r['total']:.1f}" if r["total"] is not None else "n/a"
+            flag = "🚩 " if r["flagged"] else "   "
+            print(f"{flag}{r['away']} @ {r['home']}  ({r['date']})")
+            print(f"    books ML(home) {b} [{r['n_books']} books] | spread {s} | total {t} | Poly {p}")
             for src, d in r["divs"].items():
                 print(f"    {src}: {direction_text(d)}")
+            for f in r["spread_flags"]:
+                print(f"    spread watch: {f['book']} {f['point']:+.1f} "
+                      f"({f['off']:+.1f} off consensus)")
             if r["context"]:
                 print(f"    ctx: {r['context']}")
         if res["unmatched"]:
@@ -683,13 +767,14 @@ def render_terminal(all_leagues, threshold):
                 print(f"    {u['game']} — {u['reason']}")
 
 
-def render_html(all_leagues, threshold, path):
+def render_html(all_leagues, threshold, spread_threshold, path):
     gen = NOW.strftime("%Y-%m-%d %H:%M UTC")
     nav = "".join(
         f'<a href="{h}">{l}</a>' for h, l in
         [("index.html", "Dashboard"), ("markets.html", "Markets"),
-         ("stats.html", "Stats"), ("sports.html", "Sports"),
-         ("data.html", "Data"), ("about.html", "About")])
+         ("backtests.html", "Backtests"), ("sports.html", "Sports"),
+         ("fantasy.html", "Fantasy"), ("data.html", "Data"),
+         ("about.html", "About")])
     any_books = any(r.get("books_home") is not None
                     for res in all_leagues.values() for r in res["rows"])
     banner = ""
@@ -700,54 +785,57 @@ def render_html(all_leagues, threshold, path):
     body = [banner + f"""<div class="freshness">📡 Sports snapshot generated {gen} ·
 odds cached (free-tier friendly: refreshes ≤2x/day) · {htmlmod.escape(DISCLAIMER)}</div>
 <h1>Sports: markets vs books</h1>
-<p class="lede">Prediction-market moneylines vs vig-free sportsbook consensus.
-Divergence ≥ {threshold*100:.0f}pp is flagged. {htmlmod.escape(DISCLAIMER)}</p>
 <h2>Methodology</h2>
 <ul class="method">
-<li>Sportsbook odds → implied probability per book, de-vigged by dividing each side
+<li>Moneyline: sportsbook odds → implied probability per book, de-vigged by dividing each side
 by the overround (basic normalization). Consensus = mean de-vigged home-win probability across books.</li>
-<li>Polymarket: Yes-token price on the game moneyline market. Kalshi: orderbook mid.</li>
+<li>Spread: mean of each book's home-team point spread. Books sitting ≥ {spread_threshold:.1f} point
+off the cross-book average are flagged — a book disagreeing with the market on the number.</li>
+<li>Total: mean over/under line across books.</li>
+<li>Polymarket: Yes-token price on the game moneyline market. (Kalshi support is parked —
+its sports data is too thin to be useful right now.)</li>
 <li>Team matching is conservative — a game only appears when both teams resolve through
 the canonical table; anything ambiguous is listed as unmatched, never guessed.</li>
 <li>Context: ESPN records/injuries + Open-Meteo weather for outdoor NFL games. Free sources only.</li>
 </ul>"""]
     for league, res in all_leagues.items():
-        flagged = sorted([r for r in res["rows"] if r["flagged"]], key=lambda r: -r["max_div"])
-        rest = sorted([r for r in res["rows"] if not r["flagged"]], key=lambda r: -r["max_div"])
-        body.append(f"<h2>{league.upper()} — divergence leaderboard "
-                    f"({len(flagged)} flagged / {res['n_games']} games)</h2>")
-        if flagged:
-            body.append("<table><tr><th>Game</th><th>Books (home)</th><th>Polymarket</th>"
-                        "<th>Kalshi</th><th>Gap</th><th>Context</th></tr>")
-            for r in flagged:
-                b = f"{r['books_home']*100:.1f}%" if r["books_home"] is not None else "n/a"
-                p = f"{r['poly_home']*100:.1f}%" if r["poly_home"] is not None else "n/a"
-                k = f"{r['kalshi_home']*100:.1f}%" if r["kalshi_home"] is not None else "n/a"
-                gaps = "<br>".join(f"{s}: {direction_text(d)}" for s, d in r["divs"].items())
-                plink = (f"<a href='{r['poly_url']}' target='_blank' rel='noopener'>{p}</a>"
-                         if r.get("poly_url") else p)
-                ctx = htmlmod.escape(r["context"] or "—")
-                body.append(
-                    f"<tr class='flag'><td><b>{r['away']} @ {r['home']}</b><br>"
-                    f"<span class='dim'>{htmlmod.escape(r['date'] or '')}</span></td>"
-                    f"<td>{b}<br><span class='dim'>{r['n_books']} books</span></td>"
-                    f"<td>{plink}</td><td>{k}</td><td>{gaps}</td><td class='ctx'>{ctx}</td></tr>")
-            body.append("</table>")
-        else:
-            body.append("<p>No divergences above threshold right now.</p>")
-        if rest:
-            body.append("<details><summary>All compared games "
-                        f"({len(rest)} below threshold)</summary><table>"
-                        "<tr><th>Game</th><th>Books</th><th>Poly</th><th>Kalshi</th><th>Max gap</th></tr>")
-            for r in rest:
-                b = f"{r['books_home']*100:.1f}%" if r["books_home"] is not None else "n/a"
-                p = f"{r['poly_home']*100:.1f}%" if r["poly_home"] is not None else "n/a"
-                k = f"{r['kalshi_home']*100:.1f}%" if r["kalshi_home"] is not None else "n/a"
-                body.append(f"<tr><td>{r['away']} @ {r['home']}</td><td>{b}</td>"
-                            f"<td>{p}</td><td>{k}</td><td>{r['max_div']*100:.1f}pp</td></tr>")
-            body.append("</table></details>")
+        n_flag = sum(1 for r in res["rows"] if r["flagged"])
+        body.append(f"<h2>{league.upper()} — this week's games "
+                    f"({res['n_games']} games, {n_flag} flagged)</h2>")
+        if not res["rows"]:
+            body.append("<p>No games this week — league is out of season or "
+                        "none are scheduled.</p>")
+            continue
+        ordered = sorted(res["rows"],
+                         key=lambda r: (not r["flagged"], -r["max_div"], r["date"] or ""))
+        body.append("<table><tr><th>Game</th><th>Start (UTC)</th>"
+                    "<th>Books ML (home)</th><th>Avg spread</th><th>Total</th>"
+                    "<th>Polymarket</th><th>ML gap</th><th>Spread watch</th>"
+                    "<th>Context</th></tr>")
+        for r in ordered:
+            b = f"{r['books_home']*100:.1f}%" if r["books_home"] is not None else "n/a"
+            s = f"{r['spread_home']:+.1f}" if r["spread_home"] is not None else "n/a"
+            t = f"{r['total']:.1f}" if r["total"] is not None else "n/a"
+            p = f"{r['poly_home']*100:.1f}%" if r["poly_home"] is not None else "n/a"
+            gaps = "<br>".join(f"{s}: {direction_text(d)}" for s, d in r["divs"].items()) or "—"
+            if r["spread_flags"]:
+                sw = "<br>".join(f"{f['book']} {f['point']:+.1f} ({f['off']:+.1f} off)"
+                                 for f in r["spread_flags"])
+            else:
+                sw = "—"
+            plink = (f"<a href='{r['poly_url']}' target='_blank' rel='noopener'>{p}</a>"
+                     if r.get("poly_url") else p)
+            ctx = htmlmod.escape(r["context"] or "—")
+            cls = " class='flag'" if r["flagged"] else ""
+            body.append(
+                f"<tr{cls}><td><b>{r['away']} @ {r['home']}</b></td>"
+                f"<td class='dim'>{htmlmod.escape(r['date'] or '')}</td>"
+                f"<td>{b}<br><span class='dim'>{r['n_books']} books</span></td>"
+                f"<td>{s}</td><td>{t}</td><td>{plink}</td><td>{gaps}</td>"
+                f"<td class='ctx'>{sw}</td><td class='ctx'>{ctx}</td></tr>")
+        body.append("</table>")
         if res["unmatched"]:
-            body.append("<details><summary>Unmatched games "
+            body.append(f"<details><summary>Unmatched games "
                         f"({len(res['unmatched'])})</summary><ul>")
             for u in res["unmatched"]:
                 body.append(f"<li>{htmlmod.escape(u['game'])} — "
@@ -760,7 +848,7 @@ the canonical table; anything ambiguous is listed as unmatched, never guessed.</
 <link rel="stylesheet" href="styles.css">
 <style>
 tr.flag td {{ background: #2a2118; }} .ctx {{ font-size: 12px; color: #8b98a5; }}
-.dim {{ color: #8b98a5; font-size: 12px; }} .lede {{ color: #8b98a5; }}
+.dim {{ color: #8b98a5; font-size: 12px; }}
 .method li {{ margin-bottom: 6px; color: #aab4c0; }}
 details {{ margin-top: 16px; }} summary {{ cursor: pointer; color: #1d9bf0; }}
 .notice {{ background: #1a2332; border: 1px solid #2f3b4d; border-radius: 8px;
@@ -774,14 +862,13 @@ padding: 12px 16px; margin: 16px 0; font-size: 13px; color: #8b98a5; }}
 <div class="notice">🔞 21+. {htmlmod.escape(DISCLAIMER)}</div>
 {"".join(body)}
 </main>
-<footer class="wrap"><p>Data: Polymarket · Kalshi · The Odds API · ESPN · Open-Meteo.
-Free tiers only. <a href="about.html">Methodology</a></p></footer>
+<footer class="wrap"><p>Data: Polymarket · The Odds API · ESPN · Open-Meteo.
+Free tiers only. Kalshi support parked. <a href="about.html">Methodology</a></p></footer>
 </body></html>"""
     with open(path, "w") as f:
         f.write(page)
 
 
-# --------------------------------------------------------------------------
 # Fixture test (no network)
 # --------------------------------------------------------------------------
 def fixture_test():
@@ -825,6 +912,37 @@ def fixture_test():
     row["max_div"] = max(abs(v) for v in row["divs"].values())
     assert row["max_div"] >= 0.03
     print("  leaderboard math ok")
+
+    # spread consensus over two books: -3 and -4 -> avg -3.5, one book flagged
+    sodds = [{
+        "away_team": "Dallas Cowboys", "home_team": "Philadelphia Eagles",
+        "bookmakers": [
+            {"key": "draftkings", "title": "DraftKings", "markets": [
+                {"key": "spreads", "outcomes": [
+                    {"name": "Philadelphia Eagles", "point": -3.0},
+                    {"name": "Dallas Cowboys", "point": 3.0}]}]},
+            {"key": "fanduel", "title": "FanDuel", "markets": [
+                {"key": "spreads", "outcomes": [
+                    {"name": "Philadelphia Eagles", "point": -4.5},
+                    {"name": "Dallas Cowboys", "point": 4.5}]}]},
+        ]}]
+    avg, books, n = spread_consensus(sodds, maps, "DAL", "PHI")
+    assert n == 2 and abs(avg - (-3.75)) < 1e-9, (avg, n)
+    flags = [b for b, pt in books.items() if abs(pt - avg) >= 1.0]
+    print(f"  spread consensus ok: {avg} over {n} books; off-consensus: {flags}")
+
+    # totals consensus
+    todds = [{
+        "away_team": "Dallas Cowboys", "home_team": "Philadelphia Eagles",
+        "bookmakers": [
+            {"key": "draftkings", "title": "DraftKings", "markets": [
+                {"key": "totals", "outcomes": [
+                    {"name": "Over", "point": 47.5},
+                    {"name": "Under", "point": 47.5}]}]},
+        ]}]
+    tot, n = totals_consensus(todds, maps, "DAL", "PHI")
+    assert n == 1 and abs(tot - 47.5) < 1e-9, (tot, n)
+    print(f"  totals consensus ok: {tot}")
     print("ALL FIXTURE TESTS PASSED")
 
 
@@ -833,10 +951,12 @@ def fixture_test():
 # --------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description="Sports: prediction markets vs sportsbooks")
-    ap.add_argument("--leagues", default="nfl,nba",
-                    help="comma-separated (default: nfl,nba)")
+    ap.add_argument("--leagues", default="nfl,nba,mlb",
+                    help="comma-separated (default: nfl,nba,mlb)")
     ap.add_argument("--threshold", type=float, default=0.03,
-                    help="divergence flag threshold (default: 0.03)")
+                    help="moneyline divergence flag threshold (default: 0.03)")
+    ap.add_argument("--spread-threshold", type=float, default=1.0,
+                    help="spread flag threshold in points (default: 1.0)")
     ap.add_argument("--refresh", action="store_true", help="bypass caches")
     ap.add_argument("--html", action="store_true", help="write site/sports.html")
     ap.add_argument("--json", action="store_true", help="JSON to stdout")
@@ -856,7 +976,8 @@ def main():
     all_res = {}
     for lg in leagues:
         print(f"comparing {lg}…", file=sys.stderr)
-        all_res[lg] = compare_league(lg, api_key, args.threshold, args.refresh)
+        all_res[lg] = compare_league(lg, api_key, args.threshold,
+                                     args.spread_threshold, args.refresh)
 
     if ODDS_QUOTA["remaining"] is not None:
         print(f"Odds API quota: {ODDS_QUOTA['remaining']} requests remaining "
@@ -868,13 +989,13 @@ def main():
         except (TypeError, ValueError):
             pass
 
-    render_terminal(all_res, args.threshold) if not args.json else None
+    render_terminal(all_res, args.threshold, args.spread_threshold) if not args.json else None
     if args.json:
         json.dump(all_res, sys.stdout, indent=1, default=str)
         sys.stdout.write("\n")
     if args.html:
         out = os.path.join(BASE, "site", "sports.html")
-        render_html(all_res, args.threshold, out)
+        render_html(all_res, args.threshold, args.spread_threshold, out)
         print(f"\nwrote {out}", file=sys.stderr)
 
 
