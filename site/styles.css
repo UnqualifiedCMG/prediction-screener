@@ -83,7 +83,7 @@ a:hover { text-decoration: underline; }
 .tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--panel); }
 th {
-  text-align: left;
+  text-align: center;
   padding: 10px 10px;
   color: var(--muted);
   border-bottom: 2px solid var(--border);
@@ -95,10 +95,10 @@ th {
 }
 th.sortable { cursor: pointer; }
 th.sortable:hover { color: var(--text); }
-td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; text-align: center; }
 tr:last-child td { border-bottom: none; }
 td.q { max-width: 480px; }
-td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.num { text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pos { color: var(--up); }
 .neg { color: var(--down); }
 
