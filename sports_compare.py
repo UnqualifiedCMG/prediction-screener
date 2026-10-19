@@ -1103,7 +1103,7 @@ def render_game_page(r, gen_note):
     # Per-book lines
     parts.append("<h2>Lines by sportsbook</h2>")
     if r["books"]:
-        brow = "".join(_book_row(b, r["books"][k])
+        brow = "".join(_book_row(b, k)
                        for b, k in sorted(r["books"].items()))
         parts.append("<div class='tbl-wrap'><table><thead><tr><th>Book</th>"
                      "<th>ML home</th><th>ML away</th><th>Spread (home)</th>"
