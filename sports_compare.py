@@ -388,7 +388,8 @@ def game_coords(league, home_abbr, venue):
     return NFL_STADIUMS.get(home_abbr)
 
 
-def fetch_polymarket_game(league, away_short, home_short, refresh=False):
+def fetch_polymarket_game(league, away_short, home_short, refresh=False,
+                         away_full=None, home_full=None):
     """Moneyline market for one game via public-search. Conservative match."""
     key = f"poly_{league}_{away_short}_{home_short}.json".replace(" ", "_")
     if not refresh:
@@ -396,8 +397,12 @@ def fetch_polymarket_game(league, away_short, home_short, refresh=False):
         if hit is not None:
             return hit
     prefix = LEAGUES[league]["poly_prefix"]
+    queries = [f"{away_short} vs. {home_short}", f"{home_short} vs. {away_short}"]
+    if away_full and home_full:
+        # API titles often use full names ("Cleveland Guardians vs. Tampa Bay Rays")
+        queries += [f"{away_full} vs. {home_full}", f"{home_full} vs. {away_full}"]
     result = None
-    for query in (f"{away_short} vs. {home_short}", f"{home_short} vs. {away_short}"):
+    for query in queries:
         try:
             _, d = _get(POLY_SEARCH, {"q": query})
         except Exception:
@@ -416,7 +421,13 @@ def fetch_polymarket_game(league, away_short, home_short, refresh=False):
                         outs = json.loads(outs)
                     except Exception:
                         continue
-                if q == title and set(outs) == {away_short, home_short}:
+                # outcomes may use short names ("Guardians") or full names
+                # ("Cleveland Guardians") depending on the event
+                name_sets = [{away_short, home_short}]
+                if away_full and home_full:
+                    name_sets.append({away_full, home_full})
+                if q == title and any(set(outs) == ns for ns in name_sets):
+                    home_name = home_full if set(outs) == {away_full, home_full} else home_short
                     pr = m.get("outcomePrices") or []
                     if isinstance(pr, str):
                         try:
@@ -430,7 +441,7 @@ def fetch_polymarket_game(league, away_short, home_short, refresh=False):
                     if len(prices) != 2:
                         continue
                     # map price to home team by outcome name
-                    ph = prices[outs.index(home_short)]
+                    ph = prices[outs.index(home_name)]
                     result = {
                         "price_home": ph,
                         "volume": ev.get("volume"),
@@ -746,7 +757,8 @@ def compare_league(league, api_key, threshold, spread_threshold=1.0, refresh=Fal
         away_short = maps["abbr"][away][2]
         home_short = maps["abbr"][home][2]
 
-        poly = fetch_polymarket_game(league, away_short, home_short, refresh)
+        poly = fetch_polymarket_game(league, away_short, home_short, refresh,
+                                       maps["abbr"][away][1], maps["abbr"][home][1])
         kal = match_kalshi_game(kalshi, maps, away, home) if ENABLE_KALSHI else None
         cons, n_books = book_consensus(odds_data, maps, away, home) if odds_data else (None, 0)
         avg_spread, book_spreads, n_spread_books = (
