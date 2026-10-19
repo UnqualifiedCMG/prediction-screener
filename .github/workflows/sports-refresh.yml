@@ -1,7 +1,9 @@
-# PolyScope sports refresh — daily divergence leaderboard rebuild.
+# PolyScope daily refresh — rebuilds all data-driven pages.
 #
-# Runs sports_compare.py against live APIs and commits the regenerated
-# site/sports.html back to main, which GitHub Pages then redeploys.
+# Runs sports_compare.py, data_page.py, fantasy.py, and site/build.py
+# against live APIs and commits the regenerated HTML back to main,
+# which GitHub Pages then redeploys. The repo-root index.html IS the
+# dashboard (written by site/build.py).
 #
 # Quota budget (The Odds API free tier):
 #   - 1 run/day x 3 sports (nfl, nba, mlb) = ~3 credits/day, ~90/month.
@@ -10,8 +12,10 @@
 #   - ODDS_API_KEY is stored as a repo secret (Settings > Secrets >
 #     Actions). It is referenced here as ${{ secrets.ODDS_API_KEY }}
 #     and never appears in code, logs, or committed files.
-#   - ESPN, Polymarket, Kalshi, Open-Meteo need no key.
-name: Sports data refresh
+#   - ESPN, Polymarket, Sleeper, Open-Meteo need no key.
+#   - Kalshi is parked (screener.ENABLE_KALSHI=False) — nothing here
+#     touches Kalshi.
+name: PolyScope daily refresh
 
 on:
   schedule:
@@ -20,12 +24,12 @@ on:
   workflow_dispatch:  # allow manual runs from the Actions tab
 
 permissions:
-  contents: write  # needed to commit the rebuilt page back to main
+  contents: write  # needed to commit the rebuilt pages back to main
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -36,25 +40,34 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Rebuild sports + data pages
+      - name: Rebuild sports page (moneyline + spread divergences)
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: |
           # Quota status prints to stderr and appears in this step's log.
           python3 sports_compare.py --leagues nfl,nba,mlb \
-            --threshold 0.03 --html --json > /tmp/sports.json 2>/tmp/sports.log
+            --threshold 0.03 --spread-threshold 1.0 \
+            --html --json > /tmp/sports.json 2>/tmp/sports.log
           tail -5 /tmp/sports.log
+
+      - name: Rebuild dashboard, markets, data, fantasy pages
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python3 site/build.py 2>&1 | tail -3
           python3 data_page.py --html 2>&1 | tail -3
+          python3 fantasy.py --html 2>&1 | tail -3
 
       - name: Commit and push
         run: |
           git config user.name "polyscope-bot"
           git config user.email "polyscope-bot@users.noreply.github.com"
-          git add site/sports.html site/data.html
+          git add index.html site/index.html site/markets.html site/about.html \
+                  site/sports.html site/data.html site/fantasy.html
           # keep a dated JSON snapshot of the raw comparison for the record
           mkdir -p site/data
           cp /tmp/sports.json "site/data/sports-$(date -u +%F).json"
           git add site/data/"sports-$(date -u +%F).json"
           git diff --cached --quiet && echo "no changes" && exit 0
-          git commit -m "sports+data refresh $(date -u +%F)"
+          git commit -m "polyscope refresh $(date -u +%F)"
           git push
