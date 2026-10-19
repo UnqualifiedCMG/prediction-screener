@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backtest stats — PolyScope</title>
+<link rel="stylesheet" href="styles.css"></head>
+<body>
+<header class="site-header"><div class="wrap head-row">
+<a class="brand" href="index.html">◈ Poly<span>Scope</span></a>
+<nav><a href="index.html" class="">Dashboard</a><a href="markets.html" class="">Markets</a><a href="stats.html" class="on">Stats</a><a href="about.html" class="">About</a></nav></div></header>
+<main class="wrap">
+<div class="freshness">📡 Data as of 2026-10-18 23:57 UTC · site generated 2026-10-19 00:21 UTC ·
+this is a scheduled snapshot — reload for the latest rebuild.</div>
+
+<h1>Backtest: do extreme prices resolve?</h1>
+<p class="sub">1,490 resolved Polymarket markets · min volume $1,000 · 16,000 closed events scanned · multi-outcome outcomes included as binary records. Daily price samples per market. Every bucket shows its N —
+treat small-N buckets as anecdote, not signal.</p>
+<div class="warn"><b>Read this first.</b> 90¢ is typically first
+touched only 2.4 hours before resolution — i.e. <i>after</i> the
+outcome is effectively decided. The high hit rate below is mostly hindsight, not a
+tradeable edge: by the time a market prints 90¢, the information is already public.
+The real question is whether you can get in <i>before</i> the crowd moves it there.</div>
+<div class="stat-grid">
+  <div class="stat-card"><div class="k">Reached ≥90¢ → resolved YES</div>
+    <div class="v" style="color:var(--up)">92.3%</div>
+    <div class="d">n=736 markets</div></div>
+  <div class="stat-card"><div class="k">Reached ≤10¢ → resolved NO</div>
+    <div class="v" style="color:var(--up)">91.2%</div>
+    <div class="d">mirror image, same idea</div></div>
+  <div class="stat-card"><div class="k">Held ≥80¢ into final week</div>
+    <div class="v">100.0%</div>
+    <div class="d">n=677 — "the crowd was right"</div></div>
+  <div class="stat-card"><div class="k">Collapsed below 80¢</div>
+    <div class="v" style="color:var(--down)">3.4%</div>
+    <div class="d">n=59 — small sample, read carefully</div></div>
+</div>
+
+<h2>Conditional resolution rates by price level</h2>
+<p class="sub">"Reached this price at any point" → how it resolved.</p>
+<div class="tbl-wrap"><table><thead><tr>
+<th>Reached ≥</th><th>N</th><th>Resolved YES</th>
+<th>Reached ≤</th><th>N</th><th>Resolved NO</th>
+</tr></thead><tbody><tr><td class='num'>≥50%</td><td class='num'>1219</td><td class='num'><b>55.7%</b></td><td class='num'>≤50%</td><td class='num'>1321</td><td class='num'><b>61.4%</b></td></tr><tr><td class='num'>≥60%</td><td class='num'>1020</td><td class='num'><b>66.6%</b></td><td class='num'>≤40%</td><td class='num'>1168</td><td class='num'><b>69.4%</b></td></tr><tr><td class='num'>≥70%</td><td class='num'>913</td><td class='num'><b>74.4%</b></td><td class='num'>≤30%</td><td class='num'>1066</td><td class='num'><b>76.1%</b></td></tr><tr><td class='num'>≥80%</td><td class='num'>808</td><td class='num'><b>84.0%</b></td><td class='num'>≤20%</td><td class='num'>964</td><td class='num'><b>84.1%</b></td></tr><tr><td class='num'>≥90%</td><td class='num'>736</td><td class='num'><b>92.3%</b></td><td class='num'>≤10%</td><td class='num'>889</td><td class='num'><b>91.2%</b></td></tr><tr><td class='num'>≥95%</td><td class='num'>712</td><td class='num'><b>95.4%</b></td><td class='num'>≤5%</td><td class='num'>853</td><td class='num'><b>95.1%</b></td></tr></tbody></table></div>
+
+<h2>Price in final 7 days → resolved YES</h2>
+<div class="tbl-wrap"><table><thead><tr>
+<th>Final-week band</th><th>N</th><th>Resolved YES</th>
+</tr></thead><tbody><tr><td>90%+</td><td class='num'>676</td><td class='num'><b>100.0%</b></td></tr><tr><td>70%–90%</td><td class='num'>1</td><td class='num'><b>100.0%</b></td></tr><tr><td>50%–70%</td><td class='num'>3</td><td class='num'><b>66.7%</b></td></tr><tr><td>30%–50%</td><td class='num'>1</td><td class='num'><b>0.0%</b></td></tr><tr><td>10%–30%</td><td class='num'>1</td><td class='num'><b>0.0%</b></td></tr><tr><td>0%–10%</td><td class='num'>808</td><td class='num'><b>0.0%</b></td></tr></tbody></table></div>
+
+<h2>Time from first touch to resolution</h2>
+<ul>
+<li>First hit 90¢ → resolution: <b>n=736, median 0.1d, mean 0.2d</b></li>
+<li>First hit 10¢ → resolution: <b>n=890, median 0.1d, mean 0.3d</b></li>
+</ul>
+
+<div class="warn"><b>Before you trade on any of this</b><ul><li>Daily price samples can miss intraday spikes — a market that briefly touched 90c between samples is counted as never reaching it.</li><li>&#x27;Reached 90c&#x27; includes markets that later collapsed; see the collapse split above. Past crowd confidence is not future accuracy.</li><li>Selection bias: only markets the gamma API still lists. Deleted, voided, or ambiguous markets are excluded, which can inflate hit rates.</li><li>N per bucket is shown for a reason — buckets with small N are noise, not signal. Treat anything under ~30 as anecdote.</li><li>These are unconditional averages across all categories (sports, politics, crypto). Base rates differ wildly by category.</li><li>Polymarket only. Kalshi has no price-history API, so its markets can&#x27;t be analyzed this way.</li></ul></div>
+
+</main>
+<footer class="wrap foot">PolyScope · public API data only · for research,
+not financial advice. Nothing here is a recommendation to trade.</footer>
+</body></html>
