@@ -1,0 +1,285 @@
+{
+ "nfl": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ },
+ "nba": {
+  "rows": [
+   {
+    "league": "NBA",
+    "away": "BOS",
+    "home": "DET",
+    "date": "2026-10-20 19:00",
+    "date_iso": "2026-10-20T19:00Z",
+    "slug": "nba-bos-det-20261020",
+    "venue": "Little Caesars Arena",
+    "status": "10/20 - 3:00 PM EDT",
+    "context": "BOS 0-0 @ DET 0-0 \u00b7 1 Q/D/Out inj: Devin Carter (G, Out)",
+    "injuries": [
+     "Devin Carter (G, Out)"
+    ],
+    "n_inj": 1,
+    "poly_home": 0.475,
+    "poly_url": "https://polymarket.us/sports/nba/nba-bos-det-2026-10-20",
+    "poly_volume": 124821.579021,
+    "kalshi_home": null,
+    "books_home": 0.4747,
+    "n_books": 9,
+    "books": {
+     "FanDuel": {
+      "ml_home": -102,
+      "ml_away": -116,
+      "spread_home": 1.5,
+      "total": 221.5
+     },
+     "BetRivers": {
+      "ml_home": -104,
+      "ml_away": -121,
+      "spread_home": 1.5,
+      "total": 221.5
+     },
+     "BetMGM": {
+      "ml_home": 100,
+      "ml_away": -120,
+      "spread_home": 1.5,
+      "total": 220.5
+     },
+     "DraftKings": {
+      "ml_home": 102,
+      "ml_away": -122,
+      "spread_home": 1.5,
+      "total": 219.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 104,
+      "ml_away": -124,
+      "spread_home": 1.5,
+      "total": 221.5
+     },
+     "LowVig.ag": {
+      "ml_home": 106,
+      "ml_away": -122,
+      "spread_home": 1.5,
+      "total": 221.5
+     },
+     "Bovada": {
+      "ml_home": 100,
+      "ml_away": -120,
+      "spread_home": 1.5,
+      "total": 220.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 103,
+      "ml_away": -126,
+      "spread_home": 1.5,
+      "total": 221.5
+     },
+     "BetUS": {
+      "ml_home": 105,
+      "ml_away": -125,
+      "spread_home": 1.5,
+      "total": 221.5
+     }
+    },
+    "spread_home": 1.5,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 221.1,
+    "divs": {
+     "poly": 0.0003
+    },
+    "max_div": 0.0003,
+    "flagged": false
+   },
+   {
+    "league": "NBA",
+    "away": "PHI",
+    "home": "NY",
+    "date": "2026-10-20 23:00",
+    "date_iso": "2026-10-20T23:00Z",
+    "slug": "nba-phi-ny-20261020",
+    "venue": "Madison Square Garden",
+    "status": "10/20 - 7:00 PM EDT",
+    "context": "PHI 0-0 @ NY 0-0 \u00b7 3 Q/D/Out inj: Tacko Fall (C, Out); Dominick Barlow (F, Out)",
+    "injuries": [
+     "Tacko Fall (C, Out)",
+     "Dominick Barlow (F, Out)",
+     "Ariel Hukporti (C, Out)"
+    ],
+    "n_inj": 3,
+    "poly_home": 0.615,
+    "poly_url": "https://polymarket.us/sports/nba/nba-phi-nyk-2026-10-20",
+    "poly_volume": 52706.420453000006,
+    "kalshi_home": null,
+    "books_home": 0.6153,
+    "n_books": 9,
+    "books": {
+     "FanDuel": {
+      "ml_home": -188,
+      "ml_away": 156,
+      "spread_home": -4.5,
+      "total": 232.5
+     },
+     "BetRivers": {
+      "ml_home": -190,
+      "ml_away": 150,
+      "spread_home": -4.5,
+      "total": 231.5
+     },
+     "BetMGM": {
+      "ml_home": -185,
+      "ml_away": 150,
+      "spread_home": -4.5,
+      "total": 231.5
+     },
+     "DraftKings": {
+      "ml_home": -180,
+      "ml_away": 150,
+      "spread_home": -4.5,
+      "total": 232.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -170,
+      "ml_away": 149,
+      "spread_home": -4.5,
+      "total": 232.0
+     },
+     "LowVig.ag": {
+      "ml_home": -170,
+      "ml_away": 150,
+      "spread_home": -4.5,
+      "total": 232.0
+     },
+     "Bovada": {
+      "ml_home": -175,
+      "ml_away": 150,
+      "spread_home": -4.5,
+      "total": 232.5
+     },
+     "MyBookie.ag": {
+      "ml_home": -180,
+      "ml_away": 146,
+      "spread_home": -4.5,
+      "total": 232.0
+     },
+     "BetUS": {
+      "ml_home": -170,
+      "ml_away": 146,
+      "spread_home": -4.5,
+      "total": 232.0
+     }
+    },
+    "spread_home": -4.5,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 232.1,
+    "divs": {
+     "poly": -0.0003
+    },
+    "max_div": 0.0003,
+    "flagged": false
+   },
+   {
+    "league": "NBA",
+    "away": "OKC",
+    "home": "SA",
+    "date": "2026-10-21 01:30",
+    "date_iso": "2026-10-21T01:30Z",
+    "slug": "nba-okc-sa-20261021",
+    "venue": "Frost Bank Center",
+    "status": "10/20 - 9:30 PM EDT",
+    "context": "OKC 0-0 @ SA 0-0 \u00b7 5 Q/D/Out inj: Thomas Sorber (C, Out); Nikola Topic (G, Out)",
+    "injuries": [
+     "Thomas Sorber (C, Out)",
+     "Nikola Topic (G, Out)",
+     "Otega Oweh (G, Out)",
+     "Tobias Harris (F, Out)",
+     "Jayden Quaintance (F, Out)"
+    ],
+    "n_inj": 5,
+    "poly_home": 0.515,
+    "poly_url": "https://polymarket.us/sports/nba/nba-okc-sas-2026-10-20",
+    "poly_volume": 62856.195778999994,
+    "kalshi_home": null,
+    "books_home": 0.522,
+    "n_books": 9,
+    "books": {
+     "FanDuel": {
+      "ml_home": -118,
+      "ml_away": 100,
+      "spread_home": -1.5,
+      "total": 232.5
+     },
+     "BetRivers": {
+      "ml_home": -130,
+      "ml_away": 105,
+      "spread_home": -1.5,
+      "total": 233.5
+     },
+     "BetMGM": {
+      "ml_home": -120,
+      "ml_away": 100,
+      "spread_home": -1.5,
+      "total": 232.5
+     },
+     "DraftKings": {
+      "ml_home": -118,
+      "ml_away": -102,
+      "spread_home": -1.5,
+      "total": 230.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -118,
+      "ml_away": -102,
+      "spread_home": -1.5,
+      "total": 231.5
+     },
+     "LowVig.ag": {
+      "ml_home": -116,
+      "ml_away": 100,
+      "spread_home": -1.5,
+      "total": 231.5
+     },
+     "Bovada": {
+      "ml_home": -120,
+      "ml_away": 100,
+      "spread_home": -1.5,
+      "total": 232.0
+     },
+     "MyBookie.ag": {
+      "ml_home": -122,
+      "ml_away": 100,
+      "spread_home": -1.5,
+      "total": 232.0
+     },
+     "BetUS": {
+      "ml_home": -120,
+      "ml_away": 100,
+      "spread_home": -1.5,
+      "total": 232.5
+     }
+    },
+    "spread_home": -1.5,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 232.1,
+    "divs": {
+     "poly": -0.007
+    },
+    "max_div": 0.007,
+    "flagged": false
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 3
+ },
+ "mlb": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ }
+}
