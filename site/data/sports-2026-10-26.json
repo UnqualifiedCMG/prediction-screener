@@ -1,0 +1,112 @@
+{
+ "nfl": {
+  "rows": [
+   {
+    "league": "NFL",
+    "away": "DAL",
+    "home": "PHI",
+    "date": "2026-10-27 00:15",
+    "date_iso": "2026-10-27T00:15Z",
+    "slug": "nfl-dal-phi-20261027",
+    "venue": "Lincoln Financial Field",
+    "status": "10/26 - 8:15 PM EDT",
+    "context": "DAL 2-4 @ PHI 2-4 \u00b7 10 Q/D/Out inj: Drew Shelton (OT, Out); Dee Winters (LB, Out) \u00b7 58F, 0% precip, 5mph wind",
+    "injuries": [
+     "Drew Shelton (OT, Out)",
+     "Dee Winters (LB, Out)",
+     "KaVontae Turpin (WR, Out)",
+     "Michael Carter II (CB, Out)",
+     "Nolan Smith Jr. (LB, Out)",
+     "Dontayvion Wicks (WR, Out)"
+    ],
+    "n_inj": 10,
+    "poly_home": 0.335,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-dal-phi-2026-10-26",
+    "poly_volume": 1011855.216139,
+    "kalshi_home": null,
+    "books_home": 0.341,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 170,
+      "ml_away": -205,
+      "spread_home": 4.5,
+      "total": 43.5
+     },
+     "BetUS": {
+      "ml_home": 183,
+      "ml_away": -215,
+      "spread_home": 4.0,
+      "total": 44.0
+     },
+     "FanDuel": {
+      "ml_home": 172,
+      "ml_away": -205,
+      "spread_home": 4.5,
+      "total": 43.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 192,
+      "ml_away": -230,
+      "spread_home": 4.5,
+      "total": 44.0
+     },
+     "LowVig.ag": {
+      "ml_home": 192,
+      "ml_away": -230,
+      "spread_home": 4.5,
+      "total": 44.0
+     },
+     "BetRivers": {
+      "ml_home": 180,
+      "ml_away": -225,
+      "spread_home": 4.5,
+      "total": 44.0
+     },
+     "BetMGM": {
+      "ml_home": 180,
+      "ml_away": -220,
+      "spread_home": 4.5,
+      "total": 44.0
+     },
+     "MyBookie.ag": {
+      "ml_home": 181,
+      "ml_away": -218,
+      "spread_home": 4.5,
+      "total": 44.0
+     },
+     "Bovada": {
+      "ml_home": 185,
+      "ml_away": -225,
+      "spread_home": 4.5,
+      "total": 43.5
+     }
+    },
+    "spread_home": 4.4,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 43.8,
+    "divs": {
+     "poly": -0.006
+    },
+    "max_div": 0.006,
+    "flagged": false
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 1
+ },
+ "nba": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ },
+ "mlb": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ }
+}
