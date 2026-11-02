@@ -1,0 +1,110 @@
+{
+ "nfl": {
+  "rows": [
+   {
+    "league": "NFL",
+    "away": "CHI",
+    "home": "SEA",
+    "date": "2026-11-03 01:15",
+    "date_iso": "2026-11-03T01:15Z",
+    "slug": "nfl-chi-sea-20261103",
+    "venue": "Lumen Field",
+    "status": "11/2 - 8:15 PM EST",
+    "context": "CHI 5-2 @ SEA 4-3 \u00b7 11 Q/D/Out inj: Kyle Monangai (RB, Out); Charles Cross (OT, Out) \u00b7 49F, 4% precip, 3mph wind",
+    "injuries": [
+     "Kyle Monangai (RB, Out)",
+     "Charles Cross (OT, Out)",
+     "Velus Jones Jr. (RB, Out)",
+     "Uchenna Nwosu (LB, Doubtful)"
+    ],
+    "n_inj": 11,
+    "poly_home": 0.625,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-chi-sea-2026-11-02",
+    "poly_volume": 588325.52362,
+    "kalshi_home": null,
+    "books_home": 0.6098,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -170,
+      "ml_away": 142,
+      "spread_home": -3.0,
+      "total": 46.5
+     },
+     "FanDuel": {
+      "ml_home": -178,
+      "ml_away": 150,
+      "spread_home": -3.0,
+      "total": 46.5
+     },
+     "BetRivers": {
+      "ml_home": -175,
+      "ml_away": 140,
+      "spread_home": -3.0,
+      "total": 46.5
+     },
+     "LowVig.ag": {
+      "ml_home": -175,
+      "ml_away": 153,
+      "spread_home": -3.5,
+      "total": 46.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -175,
+      "ml_away": 153,
+      "spread_home": -3.0,
+      "total": 46.5
+     },
+     "BetUS": {
+      "ml_home": -175,
+      "ml_away": 150,
+      "spread_home": -3.0,
+      "total": 46.5
+     },
+     "MyBookie.ag": {
+      "ml_home": -177,
+      "ml_away": 143,
+      "spread_home": -3.0,
+      "total": 46.5
+     },
+     "BetMGM": {
+      "ml_home": -175,
+      "ml_away": 145,
+      "spread_home": -3.5,
+      "total": 46.5
+     },
+     "Bovada": {
+      "ml_home": -165,
+      "ml_away": 140,
+      "spread_home": -3.0,
+      "total": 46.5
+     }
+    },
+    "spread_home": -3.1,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 46.5,
+    "divs": {
+     "poly": 0.0152
+    },
+    "max_div": 0.0152,
+    "flagged": false
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 1
+ },
+ "nba": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ },
+ "mlb": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ }
+}
