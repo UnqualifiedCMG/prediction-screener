@@ -1,0 +1,1306 @@
+{
+ "nfl": {
+  "rows": [
+   {
+    "league": "NFL",
+    "away": "JAX",
+    "home": "BAL",
+    "date": "2026-11-06 01:15",
+    "date_iso": "2026-11-06T01:15Z",
+    "slug": "nfl-jax-bal-20261106",
+    "venue": "M&T Bank Stadium",
+    "status": "11/5 - 8:15 PM EST",
+    "context": "JAX 5-2 @ BAL 4-4 \u00b7 5 Q/D/Out inj: Jaylinn Hawkins (S, Out); Tyler Huntley (QB, Out) \u00b7 69F, 2% precip, 18mph wind",
+    "injuries": [
+     "Jaylinn Hawkins (S, Out)",
+     "Tyler Huntley (QB, Out)"
+    ],
+    "n_inj": 5,
+    "poly_home": 0.185,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-jax-bal-2026-11-05",
+    "poly_volume": 361076.36000399996,
+    "kalshi_home": null,
+    "books_home": 0.1932,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 410,
+      "ml_away": -550,
+      "spread_home": 10.0,
+      "total": 39.5
+     },
+     "BetUS": {
+      "ml_home": 405,
+      "ml_away": -525,
+      "spread_home": 10.0,
+      "total": 39.5
+     },
+     "FanDuel": {
+      "ml_home": 410,
+      "ml_away": -550,
+      "spread_home": 9.5,
+      "total": 39.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 393,
+      "ml_away": -515,
+      "spread_home": 10.5,
+      "total": 39.5
+     },
+     "LowVig.ag": {
+      "ml_home": 393,
+      "ml_away": -515,
+      "spread_home": 10.5,
+      "total": 39.5
+     },
+     "BetRivers": {
+      "ml_home": 375,
+      "ml_away": -500,
+      "spread_home": 10.0,
+      "total": 39.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 380,
+      "ml_away": -526,
+      "spread_home": 10.0,
+      "total": 39.5
+     },
+     "BetMGM": {
+      "ml_home": 425,
+      "ml_away": -550,
+      "spread_home": 10.0,
+      "total": 39.5
+     },
+     "Bovada": {
+      "ml_home": 385,
+      "ml_away": -510,
+      "spread_home": 10.0,
+      "total": 39.5
+     }
+    },
+    "spread_home": 10.1,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 39.5,
+    "divs": {
+     "poly": -0.0082
+    },
+    "max_div": 0.0082,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "CIN",
+    "home": "ATL",
+    "date": "2026-11-08 14:30",
+    "date_iso": "2026-11-08T14:30Z",
+    "slug": "nfl-cin-atl-20261108",
+    "venue": "Santiago Bernab\u00e9u",
+    "status": "11/8 - 9:30 AM EST",
+    "context": "CIN 5-2 @ ATL 3-5 \u00b7 8 Q/D/Out inj: Zachariah Branch (WR, Out); Anterio Thompson (DT, Out)",
+    "injuries": [
+     "Zachariah Branch (WR, Out)",
+     "Anterio Thompson (DT, Out)"
+    ],
+    "n_inj": 8,
+    "poly_home": 0.385,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-cin-atl-2026-11-08",
+    "poly_volume": 138634.28733900003,
+    "kalshi_home": null,
+    "books_home": 0.3931,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 140,
+      "ml_away": -166,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "FanDuel": {
+      "ml_home": 142,
+      "ml_away": -168,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "BetMGM": {
+      "ml_home": 145,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "BetUS": {
+      "ml_home": 146,
+      "ml_away": -170,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 139,
+      "ml_away": -171,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 149,
+      "ml_away": -170,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "LowVig.ag": {
+      "ml_home": 149,
+      "ml_away": -170,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "BetRivers": {
+      "ml_home": 143,
+      "ml_away": -180,
+      "spread_home": 3.0,
+      "total": 52.5
+     },
+     "Bovada": {
+      "ml_home": 148,
+      "ml_away": -173,
+      "spread_home": 3.0,
+      "total": 52.5
+     }
+    },
+    "spread_home": 3.0,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 52.5,
+    "divs": {
+     "poly": -0.0081
+    },
+    "max_div": 0.0081,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "DAL",
+    "home": "IND",
+    "date": "2026-11-08 18:00",
+    "date_iso": "2026-11-08T18:00Z",
+    "slug": "nfl-dal-ind-20261108",
+    "venue": "Lucas Oil Stadium",
+    "status": "11/8 - 1:00 PM EST",
+    "context": "DAL 3-5 @ IND 2-6 \u00b7 13 Q/D/Out inj: ",
+    "injuries": [],
+    "n_inj": 13,
+    "poly_home": 0.305,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-dal-ind-2026-11-08",
+    "poly_volume": 12316.114959999999,
+    "kalshi_home": null,
+    "books_home": 0.3143,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 200,
+      "ml_away": -245,
+      "spread_home": 5.5,
+      "total": 51.5
+     },
+     "BetUS": {
+      "ml_home": 205,
+      "ml_away": -245,
+      "spread_home": 5.5,
+      "total": 51.5
+     },
+     "FanDuel": {
+      "ml_home": 215,
+      "ml_away": -260,
+      "spread_home": 5.5,
+      "total": 51.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 202,
+      "ml_away": -243,
+      "spread_home": 5.5,
+      "total": 51.5
+     },
+     "LowVig.ag": {
+      "ml_home": 202,
+      "ml_away": -243,
+      "spread_home": 5.5,
+      "total": 51.5
+     },
+     "BetRivers": {
+      "ml_home": 215,
+      "ml_away": -278,
+      "spread_home": 6.0,
+      "total": 51.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 195,
+      "ml_away": -246,
+      "spread_home": 5.5,
+      "total": 51.5
+     },
+     "BetMGM": {
+      "ml_home": 210,
+      "ml_away": -250,
+      "spread_home": 5.5,
+      "total": 51.5
+     },
+     "Bovada": {
+      "ml_home": 205,
+      "ml_away": -245,
+      "spread_home": 5.5,
+      "total": 51.5
+     }
+    },
+    "spread_home": 5.6,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 51.5,
+    "divs": {
+     "poly": -0.0093
+    },
+    "max_div": 0.0093,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "NYJ",
+    "home": "KC",
+    "date": "2026-11-08 18:00",
+    "date_iso": "2026-11-08T18:00Z",
+    "slug": "nfl-nyj-kc-20261108",
+    "venue": "Arrowhead Stadium",
+    "status": "11/8 - 1:00 PM EST",
+    "context": "NYJ 2-6 @ KC 5-2 \u00b7 13 Q/D/Out inj: Omarr Norman-Lott (DT, Out) \u00b7 62F, 0% precip, 8mph wind",
+    "injuries": [
+     "Omarr Norman-Lott (DT, Out)"
+    ],
+    "n_inj": 13,
+    "poly_home": 0.805,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-nyj-kc-2026-11-08",
+    "poly_volume": 35105.826498,
+    "kalshi_home": null,
+    "books_home": 0.8021,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -600,
+      "ml_away": 440,
+      "spread_home": -10.0,
+      "total": 47.5
+     },
+     "FanDuel": {
+      "ml_home": -560,
+      "ml_away": 420,
+      "spread_home": -9.5,
+      "total": 47.5
+     },
+     "BetUS": {
+      "ml_home": -500,
+      "ml_away": 390,
+      "spread_home": -10.0,
+      "total": 47.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -460,
+      "ml_away": 358,
+      "spread_home": -10.0,
+      "total": 47.5
+     },
+     "LowVig.ag": {
+      "ml_home": -460,
+      "ml_away": 358,
+      "spread_home": -10.0,
+      "total": 47.5
+     },
+     "BetRivers": {
+      "ml_home": -530,
+      "ml_away": 375,
+      "spread_home": -10.0,
+      "total": 47.0
+     },
+     "MyBookie.ag": {
+      "ml_home": -526,
+      "ml_away": 380,
+      "spread_home": -10.0,
+      "total": 47.5
+     },
+     "BetMGM": {
+      "ml_home": -525,
+      "ml_away": 400,
+      "spread_home": -10.0,
+      "total": 47.5
+     },
+     "Bovada": {
+      "ml_home": -460,
+      "ml_away": 355,
+      "spread_home": -10.0,
+      "total": 47.5
+     }
+    },
+    "spread_home": -9.9,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 47.4,
+    "divs": {
+     "poly": 0.0029
+    },
+    "max_div": 0.0029,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "DET",
+    "home": "MIA",
+    "date": "2026-11-08 18:00",
+    "date_iso": "2026-11-08T18:00Z",
+    "slug": "nfl-det-mia-20261108",
+    "venue": "Hard Rock Stadium",
+    "status": "11/8 - 1:00 PM EST",
+    "context": "DET 5-2 @ MIA 1-6 \u00b7 20 Q/D/Out inj: Kerby Joseph (S, Out); Jack Campbell (LB, Doubtful)",
+    "injuries": [
+     "Kerby Joseph (S, Out)",
+     "Jack Campbell (LB, Doubtful)",
+     "Darrell Baker Jr. (CB, Out)"
+    ],
+    "n_inj": 20,
+    "poly_home": 0.255,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-det-mia-2026-11-08",
+    "poly_volume": 24253.423686000002,
+    "kalshi_home": null,
+    "books_home": 0.2656,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 280,
+      "ml_away": -355,
+      "spread_home": 7.0,
+      "total": 50.5
+     },
+     "FanDuel": {
+      "ml_home": 275,
+      "ml_away": -340,
+      "spread_home": 7.0,
+      "total": 50.5
+     },
+     "BetUS": {
+      "ml_home": 255,
+      "ml_away": -310,
+      "spread_home": 7.0,
+      "total": 50.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 252,
+      "ml_away": -310,
+      "spread_home": 7.0,
+      "total": 50.5
+     },
+     "LowVig.ag": {
+      "ml_home": 252,
+      "ml_away": -310,
+      "spread_home": 7.0,
+      "total": 50.5
+     },
+     "BetRivers": {
+      "ml_home": 265,
+      "ml_away": -360,
+      "spread_home": 7.0,
+      "total": 50.0
+     },
+     "MyBookie.ag": {
+      "ml_home": 257,
+      "ml_away": -336,
+      "spread_home": 7.0,
+      "total": 50.5
+     },
+     "BetMGM": {
+      "ml_home": 260,
+      "ml_away": -325,
+      "spread_home": 7.0,
+      "total": 50.5
+     },
+     "Bovada": {
+      "ml_home": 255,
+      "ml_away": -310,
+      "spread_home": 7.0,
+      "total": 50.0
+     }
+    },
+    "spread_home": 7.0,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 50.4,
+    "divs": {
+     "poly": -0.0106
+    },
+    "max_div": 0.0106,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "CLE",
+    "home": "NO",
+    "date": "2026-11-08 18:00",
+    "date_iso": "2026-11-08T18:00Z",
+    "slug": "nfl-cle-no-20261108",
+    "venue": "Caesars Superdome",
+    "status": "11/8 - 1:00 PM EST",
+    "context": "CLE 5-3 @ NO 2-5 \u00b7 14 Q/D/Out inj: ",
+    "injuries": [],
+    "n_inj": 14,
+    "poly_home": 0.605,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-cle-no-2026-11-08",
+    "poly_volume": 106793.673622,
+    "kalshi_home": null,
+    "books_home": 0.5993,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -162,
+      "ml_away": 136,
+      "spread_home": -3.0,
+      "total": 42.5
+     },
+     "FanDuel": {
+      "ml_home": -164,
+      "ml_away": 138,
+      "spread_home": -3.0,
+      "total": 43.5
+     },
+     "BetUS": {
+      "ml_home": -165,
+      "ml_away": 142,
+      "spread_home": -3.0,
+      "total": 42.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -170,
+      "ml_away": 149,
+      "spread_home": -3.0,
+      "total": 42.5
+     },
+     "LowVig.ag": {
+      "ml_home": -170,
+      "ml_away": 149,
+      "spread_home": -3.0,
+      "total": 42.5
+     },
+     "BetRivers": {
+      "ml_home": -175,
+      "ml_away": 138,
+      "spread_home": -3.0,
+      "total": 43.5
+     },
+     "MyBookie.ag": {
+      "ml_home": -160,
+      "ml_away": 130,
+      "spread_home": -3.0,
+      "total": 42.5
+     },
+     "BetMGM": {
+      "ml_home": -165,
+      "ml_away": 138,
+      "spread_home": -3.0,
+      "total": 42.5
+     },
+     "Bovada": {
+      "ml_home": -163,
+      "ml_away": 138,
+      "spread_home": -3.0,
+      "total": 42.5
+     }
+    },
+    "spread_home": -3.0,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 42.7,
+    "divs": {
+     "poly": 0.0057
+    },
+    "max_div": 0.0057,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "NYG",
+    "home": "PHI",
+    "date": "2026-11-08 18:00",
+    "date_iso": "2026-11-08T18:00Z",
+    "slug": "nfl-nyg-phi-20261108",
+    "venue": "Lincoln Financial Field",
+    "status": "11/8 - 1:00 PM EST",
+    "context": "NYG 4-2-1 @ PHI 2-6 \u00b7 17 Q/D/Out inj:  \u00b7 59F, 1% precip, 14mph wind",
+    "injuries": [],
+    "n_inj": 17,
+    "poly_home": 0.375,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-nyg-phi-2026-11-08",
+    "poly_volume": 10292.80051,
+    "kalshi_home": null,
+    "books_home": 0.3928,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 140,
+      "ml_away": -166,
+      "spread_home": 3.5,
+      "total": 38.5
+     },
+     "BetUS": {
+      "ml_home": 150,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 38.5
+     },
+     "FanDuel": {
+      "ml_home": 140,
+      "ml_away": -166,
+      "spread_home": 3.0,
+      "total": 38.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 153,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 38.5
+     },
+     "LowVig.ag": {
+      "ml_home": 153,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 38.5
+     },
+     "BetRivers": {
+      "ml_home": 132,
+      "ml_away": -162,
+      "spread_home": 3.0,
+      "total": 39.0
+     },
+     "MyBookie.ag": {
+      "ml_home": 141,
+      "ml_away": -174,
+      "spread_home": 3.0,
+      "total": 38.5
+     },
+     "BetMGM": {
+      "ml_home": 145,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 39.0
+     },
+     "Bovada": {
+      "ml_home": 150,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 39.0
+     }
+    },
+    "spread_home": 3.1,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 38.7,
+    "divs": {
+     "poly": -0.0178
+    },
+    "max_div": 0.0178,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "LAR",
+    "home": "WAS",
+    "date": "2026-11-08 18:00",
+    "date_iso": "2026-11-08T18:00Z",
+    "slug": "nfl-lar-was-20261108",
+    "venue": "Northwest Stadium",
+    "status": "11/8 - 1:00 PM EST",
+    "context": "LAR 4-4 @ WAS 2-4-1 \u00b7 12 Q/D/Out inj: Jaylen Watson (CB, Out) \u00b7 61F, 0% precip, 14mph wind",
+    "injuries": [
+     "Jaylen Watson (CB, Out)"
+    ],
+    "n_inj": 12,
+    "poly_home": 0.325,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-la-was-2026-11-08",
+    "poly_volume": 50769.559129,
+    "kalshi_home": null,
+    "books_home": 0.3338,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 185,
+      "ml_away": -225,
+      "spread_home": 5.5,
+      "total": 47.5
+     },
+     "BetUS": {
+      "ml_home": 190,
+      "ml_away": -225,
+      "spread_home": 4.0,
+      "total": 48.0
+     },
+     "FanDuel": {
+      "ml_home": 188,
+      "ml_away": -225,
+      "spread_home": 4.5,
+      "total": 47.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 189,
+      "ml_away": -225,
+      "spread_home": 4.5,
+      "total": 48.0
+     },
+     "LowVig.ag": {
+      "ml_home": 189,
+      "ml_away": -225,
+      "spread_home": 4.5,
+      "total": 48.0
+     },
+     "BetRivers": {
+      "ml_home": 195,
+      "ml_away": -240,
+      "spread_home": 5.5,
+      "total": 47.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 178,
+      "ml_away": -222,
+      "spread_home": 4.5,
+      "total": 48.0
+     },
+     "BetMGM": {
+      "ml_home": 185,
+      "ml_away": -225,
+      "spread_home": 4.5,
+      "total": 47.5
+     },
+     "Bovada": {
+      "ml_home": 190,
+      "ml_away": -230,
+      "spread_home": 4.5,
+      "total": 48.5
+     }
+    },
+    "spread_home": 4.7,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 47.8,
+    "divs": {
+     "poly": -0.0088
+    },
+    "max_div": 0.0088,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "DEN",
+    "home": "CAR",
+    "date": "2026-11-08 18:00",
+    "date_iso": "2026-11-08T18:00Z",
+    "slug": "nfl-den-car-20261108",
+    "venue": "Bank of America Stadium",
+    "status": "11/8 - 1:00 PM EST",
+    "context": "DEN 6-2 @ CAR 3-4 \u00b7 10 Q/D/Out inj:  \u00b7 63F, 0% precip, 5mph wind",
+    "injuries": [],
+    "n_inj": 10,
+    "poly_home": 0.425,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-den-car-2026-11-08",
+    "poly_volume": 8179.777588,
+    "kalshi_home": null,
+    "books_home": 0.4293,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 130,
+      "ml_away": -155,
+      "spread_home": 2.5,
+      "total": 44.5
+     },
+     "BetUS": {
+      "ml_home": 125,
+      "ml_away": -145,
+      "spread_home": 2.5,
+      "total": 44.0
+     },
+     "FanDuel": {
+      "ml_home": 120,
+      "ml_away": -142,
+      "spread_home": 3.0,
+      "total": 43.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 123,
+      "ml_away": -143,
+      "spread_home": 2.5,
+      "total": 44.0
+     },
+     "LowVig.ag": {
+      "ml_home": 123,
+      "ml_away": -143,
+      "spread_home": 2.5,
+      "total": 44.0
+     },
+     "BetRivers": {
+      "ml_home": 125,
+      "ml_away": -152,
+      "spread_home": 2.5,
+      "total": 44.0
+     },
+     "MyBookie.ag": {
+      "ml_home": 122,
+      "ml_away": -150,
+      "spread_home": 3.0,
+      "total": 44.0
+     },
+     "BetMGM": {
+      "ml_home": 120,
+      "ml_away": -145,
+      "spread_home": 2.5,
+      "total": 44.0
+     },
+     "Bovada": {
+      "ml_home": 125,
+      "ml_away": -145,
+      "spread_home": 2.5,
+      "total": 44.5
+     }
+    },
+    "spread_home": 2.6,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 44.1,
+    "divs": {
+     "poly": -0.0043
+    },
+    "max_div": 0.0043,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "HOU",
+    "home": "LAC",
+    "date": "2026-11-08 21:05",
+    "date_iso": "2026-11-08T21:05Z",
+    "slug": "nfl-hou-lac-20261108",
+    "venue": "SoFi Stadium",
+    "status": "11/8 - 4:05 PM EST",
+    "context": "HOU 2-5 @ LAC 0-7 \u00b7 13 Q/D/Out inj: David Montgomery (RB, Out); Brenen Thompson (WR, Doubtful) \u00b7 83F, 0% precip, 1mph wind",
+    "injuries": [
+     "David Montgomery (RB, Out)",
+     "Brenen Thompson (WR, Doubtful)"
+    ],
+    "n_inj": 13,
+    "poly_home": 0.325,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-hou-lac-2026-11-08",
+    "poly_volume": 45714.85924800001,
+    "kalshi_home": null,
+    "books_home": 0.33,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 180,
+      "ml_away": -218,
+      "spread_home": 4.5,
+      "total": 40.5
+     },
+     "BetUS": {
+      "ml_home": 200,
+      "ml_away": -235,
+      "spread_home": 4.5,
+      "total": 41.0
+     },
+     "FanDuel": {
+      "ml_home": 194,
+      "ml_away": -235,
+      "spread_home": 4.5,
+      "total": 40.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 195,
+      "ml_away": -235,
+      "spread_home": 5.0,
+      "total": 40.5
+     },
+     "LowVig.ag": {
+      "ml_home": 195,
+      "ml_away": -235,
+      "spread_home": 5.0,
+      "total": 40.5
+     },
+     "BetRivers": {
+      "ml_home": 180,
+      "ml_away": -235,
+      "spread_home": 4.5,
+      "total": 40.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 185,
+      "ml_away": -232,
+      "spread_home": 4.5,
+      "total": 40.5
+     },
+     "BetMGM": {
+      "ml_home": 190,
+      "ml_away": -235,
+      "spread_home": 5.0,
+      "total": 41.0
+     },
+     "Bovada": {
+      "ml_home": 195,
+      "ml_away": -235,
+      "spread_home": 5.0,
+      "total": 40.5
+     }
+    },
+    "spread_home": 4.7,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 40.6,
+    "divs": {
+     "poly": -0.005
+    },
+    "max_div": 0.005,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "GB",
+    "home": "NE",
+    "date": "2026-11-08 21:25",
+    "date_iso": "2026-11-08T21:25Z",
+    "slug": "nfl-gb-ne-20261108",
+    "venue": "Gillette Stadium",
+    "status": "11/8 - 4:25 PM EST",
+    "context": "GB 5-3 @ NE 5-3 \u00b7 17 Q/D/Out inj: Micah Parsons (DE, Out) \u00b7 47F, 4% precip, 7mph wind",
+    "injuries": [
+     "Micah Parsons (DE, Out)"
+    ],
+    "n_inj": 17,
+    "poly_home": 0.615,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-gb-ne-2026-11-08",
+    "poly_volume": 18134.144516,
+    "kalshi_home": null,
+    "books_home": 0.6105,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -175,
+      "ml_away": 145,
+      "spread_home": -3.5,
+      "total": 45.5
+     },
+     "BetUS": {
+      "ml_home": -175,
+      "ml_away": 150,
+      "spread_home": -3.0,
+      "total": 45.5
+     },
+     "FanDuel": {
+      "ml_home": -168,
+      "ml_away": 142,
+      "spread_home": -3.0,
+      "total": 46.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -170,
+      "ml_away": 149,
+      "spread_home": -3.0,
+      "total": 45.5
+     },
+     "LowVig.ag": {
+      "ml_home": -170,
+      "ml_away": 149,
+      "spread_home": -3.0,
+      "total": 45.5
+     },
+     "BetRivers": {
+      "ml_home": -175,
+      "ml_away": 140,
+      "spread_home": -3.0,
+      "total": 46.0
+     },
+     "MyBookie.ag": {
+      "ml_home": -179,
+      "ml_away": 145,
+      "spread_home": -3.0,
+      "total": 46.0
+     },
+     "BetMGM": {
+      "ml_home": -190,
+      "ml_away": 155,
+      "spread_home": -3.5,
+      "total": 46.0
+     },
+     "Bovada": {
+      "ml_home": -170,
+      "ml_away": 145,
+      "spread_home": -3.0,
+      "total": 45.5
+     }
+    },
+    "spread_home": -3.1,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 45.8,
+    "divs": {
+     "poly": 0.0045
+    },
+    "max_div": 0.0045,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "LV",
+    "home": "SF",
+    "date": "2026-11-08 21:25",
+    "date_iso": "2026-11-08T21:25Z",
+    "slug": "nfl-lv-sf-20261108",
+    "venue": "Levi's Stadium",
+    "status": "11/8 - 4:25 PM EST",
+    "context": "LV 4-4 @ SF 6-1 \u00b7 15 Q/D/Out inj: Brandon Aiyuk (WR, Out)",
+    "injuries": [
+     "Brandon Aiyuk (WR, Out)"
+    ],
+    "n_inj": 15,
+    "poly_home": 0.805,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-lv-sf-2026-11-08",
+    "poly_volume": 30727.004168,
+    "kalshi_home": null,
+    "books_home": 0.7967,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -535,
+      "ml_away": 400,
+      "spread_home": -10.0,
+      "total": 52.5
+     },
+     "BetUS": {
+      "ml_home": -440,
+      "ml_away": 345,
+      "spread_home": -10.0,
+      "total": 53.0
+     },
+     "FanDuel": {
+      "ml_home": -500,
+      "ml_away": 385,
+      "spread_home": -9.5,
+      "total": 52.5
+     },
+     "LowVig.ag": {
+      "ml_home": -460,
+      "ml_away": 358,
+      "spread_home": -10.0,
+      "total": 53.0
+     },
+     "BetOnline.ag": {
+      "ml_home": -460,
+      "ml_away": 358,
+      "spread_home": -10.0,
+      "total": 53.0
+     },
+     "BetRivers": {
+      "ml_home": -530,
+      "ml_away": 380,
+      "spread_home": -9.5,
+      "total": 53.0
+     },
+     "MyBookie.ag": {
+      "ml_home": -566,
+      "ml_away": 398,
+      "spread_home": -10.0,
+      "total": 52.5
+     },
+     "BetMGM": {
+      "ml_home": -475,
+      "ml_away": 375,
+      "spread_home": -10.0,
+      "total": 52.5
+     },
+     "Bovada": {
+      "ml_home": -460,
+      "ml_away": 355,
+      "spread_home": -10.0,
+      "total": 53.0
+     }
+    },
+    "spread_home": -9.9,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 52.8,
+    "divs": {
+     "poly": 0.0083
+    },
+    "max_div": 0.0083,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "ARI",
+    "home": "SEA",
+    "date": "2026-11-08 21:25",
+    "date_iso": "2026-11-08T21:25Z",
+    "slug": "nfl-ari-sea-20261108",
+    "venue": "Lumen Field",
+    "status": "11/8 - 4:25 PM EST",
+    "context": "ARI 3-5 @ SEA 4-4 \u00b7 16 Q/D/Out inj: Sam Darnold (QB, Out) \u00b7 56F, 19% precip, 3mph wind",
+    "injuries": [
+     "Sam Darnold (QB, Out)"
+    ],
+    "n_inj": 16,
+    "poly_home": 0.775,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-ari-sea-2026-11-08",
+    "poly_volume": 72905.714734,
+    "kalshi_home": null,
+    "books_home": 0.7703,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -455,
+      "ml_away": 350,
+      "spread_home": -8.5,
+      "total": 39.5
+     },
+     "BetUS": {
+      "ml_home": -380,
+      "ml_away": 305,
+      "spread_home": -9.0,
+      "total": 39.5
+     },
+     "FanDuel": {
+      "ml_home": -420,
+      "ml_away": 330,
+      "spread_home": -8.5,
+      "total": 39.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -380,
+      "ml_away": 303,
+      "spread_home": -8.5,
+      "total": 39.5
+     },
+     "LowVig.ag": {
+      "ml_home": -380,
+      "ml_away": 303,
+      "spread_home": -8.5,
+      "total": 39.5
+     },
+     "BetRivers": {
+      "ml_home": -455,
+      "ml_away": 340,
+      "spread_home": -9.0,
+      "total": 40.5
+     },
+     "MyBookie.ag": {
+      "ml_home": -410,
+      "ml_away": 300,
+      "spread_home": -8.5,
+      "total": 39.5
+     },
+     "BetMGM": {
+      "ml_home": -425,
+      "ml_away": 320,
+      "spread_home": -8.5,
+      "total": 39.5
+     },
+     "Bovada": {
+      "ml_home": -400,
+      "ml_away": 310,
+      "spread_home": -8.5,
+      "total": 39.5
+     }
+    },
+    "spread_home": -8.6,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 39.6,
+    "divs": {
+     "poly": 0.0047
+    },
+    "max_div": 0.0047,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "TB",
+    "home": "CHI",
+    "date": "2026-11-09 01:20",
+    "date_iso": "2026-11-09T01:20Z",
+    "slug": "nfl-tb-chi-20261109",
+    "venue": "Soldier Field",
+    "status": "11/8 - 8:20 PM EST",
+    "context": "TB 3-5 @ CHI 6-2 \u00b7 9 Q/D/Out inj: Yaya Diaby (LB, Out) \u00b7 54F, 0% precip, 9mph wind",
+    "injuries": [
+     "Yaya Diaby (LB, Out)"
+    ],
+    "n_inj": 9,
+    "poly_home": 0.715,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-tb-chi-2026-11-08",
+    "poly_volume": 15204.387268,
+    "kalshi_home": null,
+    "books_home": 0.7085,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -305,
+      "ml_away": 245,
+      "spread_home": -6.0,
+      "total": 47.5
+     },
+     "FanDuel": {
+      "ml_home": -290,
+      "ml_away": 235,
+      "spread_home": -6.5,
+      "total": 47.5
+     },
+     "BetUS": {
+      "ml_home": -275,
+      "ml_away": 230,
+      "spread_home": -6.0,
+      "total": 47.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -275,
+      "ml_away": 226,
+      "spread_home": -6.0,
+      "total": 47.5
+     },
+     "LowVig.ag": {
+      "ml_home": -275,
+      "ml_away": 226,
+      "spread_home": -6.0,
+      "total": 47.5
+     },
+     "BetRivers": {
+      "ml_home": -275,
+      "ml_away": 220,
+      "spread_home": -6.0,
+      "total": 47.5
+     },
+     "MyBookie.ag": {
+      "ml_home": -291,
+      "ml_away": 226,
+      "spread_home": -6.0,
+      "total": 47.5
+     },
+     "BetMGM": {
+      "ml_home": -285,
+      "ml_away": 230,
+      "spread_home": -6.5,
+      "total": 47.5
+     },
+     "Bovada": {
+      "ml_home": -275,
+      "ml_away": 225,
+      "spread_home": -6.5,
+      "total": 47.5
+     }
+    },
+    "spread_home": -6.2,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 47.5,
+    "divs": {
+     "poly": 0.0065
+    },
+    "max_div": 0.0065,
+    "flagged": false
+   },
+   {
+    "league": "NFL",
+    "away": "BUF",
+    "home": "MIN",
+    "date": "2026-11-10 01:15",
+    "date_iso": "2026-11-10T01:15Z",
+    "slug": "nfl-buf-min-20261110",
+    "venue": "U.S. Bank Stadium",
+    "status": "11/9 - 8:15 PM EST",
+    "context": "BUF 6-1 @ MIN 6-1 \u00b7 8 Q/D/Out inj: ",
+    "injuries": [],
+    "n_inj": 8,
+    "poly_home": 0.375,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-buf-min-2026-11-09",
+    "poly_volume": 4856.490680000001,
+    "kalshi_home": null,
+    "books_home": 0.3823,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 150,
+      "ml_away": -180,
+      "spread_home": 3.5,
+      "total": 45.5
+     },
+     "FanDuel": {
+      "ml_home": 154,
+      "ml_away": -184,
+      "spread_home": 3.0,
+      "total": 45.5
+     },
+     "BetUS": {
+      "ml_home": 150,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 46.0
+     },
+     "BetOnline.ag": {
+      "ml_home": 155,
+      "ml_away": -177,
+      "spread_home": 3.0,
+      "total": 46.0
+     },
+     "LowVig.ag": {
+      "ml_home": 155,
+      "ml_away": -177,
+      "spread_home": 3.0,
+      "total": 46.0
+     },
+     "BetRivers": {
+      "ml_home": 145,
+      "ml_away": -180,
+      "spread_home": 3.5,
+      "total": 45.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 148,
+      "ml_away": -183,
+      "spread_home": 3.0,
+      "total": 45.5
+     },
+     "BetMGM": {
+      "ml_home": 155,
+      "ml_away": -190,
+      "spread_home": 3.5,
+      "total": 45.5
+     },
+     "Bovada": {
+      "ml_home": 150,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 45.0
+     }
+    },
+    "spread_home": 3.2,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 45.6,
+    "divs": {
+     "poly": -0.0073
+    },
+    "max_div": 0.0073,
+    "flagged": false
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 15
+ },
+ "nba": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ },
+ "mlb": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ }
+}
