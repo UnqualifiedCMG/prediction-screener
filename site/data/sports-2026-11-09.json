@@ -1,0 +1,111 @@
+{
+ "nfl": {
+  "rows": [
+   {
+    "league": "NFL",
+    "away": "BUF",
+    "home": "MIN",
+    "date": "2026-11-10 01:15",
+    "date_iso": "2026-11-10T01:15Z",
+    "slug": "nfl-buf-min-20261110",
+    "venue": "U.S. Bank Stadium",
+    "status": "11/9 - 8:15 PM EST",
+    "context": "BUF 6-1 @ MIN 6-1 \u00b7 9 Q/D/Out inj: Tyrell Shavers (WR, Out); Joshua Palmer (WR, Out)",
+    "injuries": [
+     "Tyrell Shavers (WR, Out)",
+     "Joshua Palmer (WR, Out)",
+     "Demond Claiborne (RB, Out)",
+     "Jauan Jennings (WR, Out)",
+     "Kyler Murray (QB, Out)"
+    ],
+    "n_inj": 9,
+    "poly_home": 0.385,
+    "poly_url": "https://polymarket.us/sports/nfl/nfl-buf-min-2026-11-09",
+    "poly_volume": 690765.8012250001,
+    "kalshi_home": null,
+    "books_home": 0.3852,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 150,
+      "ml_away": -180,
+      "spread_home": 3.0,
+      "total": 44.5
+     },
+     "FanDuel": {
+      "ml_home": 150,
+      "ml_away": -178,
+      "spread_home": 3.0,
+      "total": 43.5
+     },
+     "BetUS": {
+      "ml_home": 150,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 44.0
+     },
+     "BetOnline.ag": {
+      "ml_home": 153,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 44.5
+     },
+     "LowVig.ag": {
+      "ml_home": 153,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 44.5
+     },
+     "BetRivers": {
+      "ml_home": 145,
+      "ml_away": -180,
+      "spread_home": 3.0,
+      "total": 44.0
+     },
+     "MyBookie.ag": {
+      "ml_home": 147,
+      "ml_away": -181,
+      "spread_home": 3.0,
+      "total": 44.0
+     },
+     "BetMGM": {
+      "ml_home": 145,
+      "ml_away": -175,
+      "spread_home": 3.0,
+      "total": 44.0
+     },
+     "Bovada": {
+      "ml_home": 153,
+      "ml_away": -178,
+      "spread_home": 3.0,
+      "total": 44.5
+     }
+    },
+    "spread_home": 3.0,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 44.2,
+    "divs": {
+     "poly": -0.0002
+    },
+    "max_div": 0.0002,
+    "flagged": false
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 1
+ },
+ "nba": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ },
+ "mlb": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ }
+}
