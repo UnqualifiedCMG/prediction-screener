@@ -1,0 +1,289 @@
+{
+ "nfl": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ },
+ "nba": {
+  "rows": [
+   {
+    "league": "NBA",
+    "away": "DET",
+    "home": "ORL",
+    "date": "2026-11-25 00:00",
+    "date_iso": "2026-11-25T00:00Z",
+    "slug": "nba-det-orl-20261125",
+    "venue": "Kia Center",
+    "status": "11/24 - 7:00 PM EST",
+    "context": "DET 10-6 @ ORL 7-9 \u00b7 8 Q/D/Out inj: Ebuka Okorie (G, Out); Taurean Prince (F, Out)",
+    "injuries": [
+     "Ebuka Okorie (G, Out)",
+     "Taurean Prince (F, Out)",
+     "Duncan Robinson (F, Out)",
+     "Jonathan Isaac (F, Out)",
+     "Izaiyah Nelson (F, Out)",
+     "Noah Penda (F, Out)"
+    ],
+    "n_inj": 8,
+    "poly_home": 0.455,
+    "poly_url": "https://polymarket.us/sports/nba/nba-det-orl-2026-11-24",
+    "poly_volume": 441611.02506599994,
+    "kalshi_home": null,
+    "books_home": 0.4553,
+    "n_books": 9,
+    "books": {
+     "FanDuel": {
+      "ml_home": 112,
+      "ml_away": -132,
+      "spread_home": 2.5,
+      "total": 212.5
+     },
+     "BetOnline.ag": {
+      "ml_home": 110,
+      "ml_away": -130,
+      "spread_home": 2.0,
+      "total": 212.5
+     },
+     "LowVig.ag": {
+      "ml_home": 112,
+      "ml_away": -128,
+      "spread_home": 2.0,
+      "total": 212.5
+     },
+     "MyBookie.ag": {
+      "ml_home": 109,
+      "ml_away": -128,
+      "spread_home": 2.0,
+      "total": 212.5
+     },
+     "DraftKings": {
+      "ml_home": 110,
+      "ml_away": -130,
+      "spread_home": 1.5,
+      "total": 212.5
+     },
+     "BetRivers": {
+      "ml_home": 110,
+      "ml_away": -132,
+      "spread_home": 1.5,
+      "total": 212.5
+     },
+     "BetMGM": {
+      "ml_home": 110,
+      "ml_away": -135,
+      "spread_home": 2.5,
+      "total": 212.5
+     },
+     "BetUS": {
+      "ml_home": 110,
+      "ml_away": -130,
+      "spread_home": 2.0,
+      "total": 212.5
+     },
+     "Bovada": {
+      "ml_home": 115,
+      "ml_away": -135,
+      "spread_home": 2.0,
+      "total": 212.0
+     }
+    },
+    "spread_home": 2.0,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 212.4,
+    "divs": {
+     "poly": -0.0003
+    },
+    "max_div": 0.0003,
+    "flagged": false
+   },
+   {
+    "league": "NBA",
+    "away": "BOS",
+    "home": "WSH",
+    "date": "2026-11-25 01:00",
+    "date_iso": "2026-11-25T01:00Z",
+    "slug": "nba-bos-wsh-20261125",
+    "venue": "Capital One Arena",
+    "status": "11/24 - 8:00 PM EST",
+    "context": "BOS 11-6 @ WSH 7-11 \u00b7 5 Q/D/Out inj: Mitchell Robinson (C, Out); Tristan Vukcevic (F, Out)",
+    "injuries": [
+     "Mitchell Robinson (C, Out)",
+     "Tristan Vukcevic (F, Out)",
+     "Reece Beekman (G, Out)",
+     "Justin Champagnie (F, Out)"
+    ],
+    "n_inj": 5,
+    "poly_home": 0.215,
+    "poly_url": "https://polymarket.us/sports/nba/nba-bos-was-2026-11-24",
+    "poly_volume": 264235.885118,
+    "kalshi_home": null,
+    "books_home": 0.2186,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": 331,
+      "ml_away": -424,
+      "spread_home": 10.5,
+      "total": 218.5
+     },
+     "LowVig.ag": {
+      "ml_home": 340,
+      "ml_away": -420,
+      "spread_home": 11.0,
+      "total": 219.0
+     },
+     "BetOnline.ag": {
+      "ml_home": 334,
+      "ml_away": -425,
+      "spread_home": 11.0,
+      "total": 219.0
+     },
+     "FanDuel": {
+      "ml_home": 350,
+      "ml_away": -450,
+      "spread_home": 10.5,
+      "total": 218.5
+     },
+     "BetRivers": {
+      "ml_home": 360,
+      "ml_away": -480,
+      "spread_home": 10.5,
+      "total": 218.5
+     },
+     "BetMGM": {
+      "ml_home": 340,
+      "ml_away": -450,
+      "spread_home": 10.5,
+      "total": 219.5
+     },
+     "BetUS": {
+      "ml_home": 345,
+      "ml_away": -440,
+      "spread_home": 11.0,
+      "total": 219.0
+     },
+     "MyBookie.ag": {
+      "ml_home": 330,
+      "ml_away": -420,
+      "spread_home": 11.0,
+      "total": 219.0
+     },
+     "Bovada": {
+      "ml_home": 325,
+      "ml_away": -435,
+      "spread_home": 11.0,
+      "total": 219.0
+     }
+    },
+    "spread_home": 10.8,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 218.9,
+    "divs": {
+     "poly": -0.0036
+    },
+    "max_div": 0.0036,
+    "flagged": false
+   },
+   {
+    "league": "NBA",
+    "away": "DAL",
+    "home": "DEN",
+    "date": "2026-11-25 03:00",
+    "date_iso": "2026-11-25T03:00Z",
+    "slug": "nba-dal-den-20261125",
+    "venue": "Ball Arena",
+    "status": "11/24 - 10:00 PM EST",
+    "context": "DAL 10-7 @ DEN 10-5 \u00b7 4 Q/D/Out inj: Tobi Lawal (F, Out); Dereck Lively II (C, Out)",
+    "injuries": [
+     "Tobi Lawal (F, Out)",
+     "Dereck Lively II (C, Out)",
+     "Sergio de Larrea (F, Out)"
+    ],
+    "n_inj": 4,
+    "poly_home": 0.715,
+    "poly_url": "https://polymarket.us/sports/nba/nba-dal-den-2026-11-24",
+    "poly_volume": 361853.0827019999,
+    "kalshi_home": null,
+    "books_home": 0.7242,
+    "n_books": 9,
+    "books": {
+     "DraftKings": {
+      "ml_home": -310,
+      "ml_away": 251,
+      "spread_home": -8.5,
+      "total": 234.5
+     },
+     "LowVig.ag": {
+      "ml_home": -307,
+      "ml_away": 256,
+      "spread_home": -8.5,
+      "total": 234.5
+     },
+     "BetOnline.ag": {
+      "ml_home": -310,
+      "ml_away": 252,
+      "spread_home": -8.5,
+      "total": 234.5
+     },
+     "FanDuel": {
+      "ml_home": -300,
+      "ml_away": 245,
+      "spread_home": -8.5,
+      "total": 233.5
+     },
+     "BetRivers": {
+      "ml_home": -335,
+      "ml_away": 255,
+      "spread_home": -8.5,
+      "total": 234.5
+     },
+     "BetMGM": {
+      "ml_home": -295,
+      "ml_away": 230,
+      "spread_home": -8.5,
+      "total": 234.5
+     },
+     "MyBookie.ag": {
+      "ml_home": -310,
+      "ml_away": 238,
+      "spread_home": -8.0,
+      "total": 234.5
+     },
+     "BetUS": {
+      "ml_home": -310,
+      "ml_away": 255,
+      "spread_home": -8.5,
+      "total": 234.0
+     },
+     "Bovada": {
+      "ml_home": -300,
+      "ml_away": 250,
+      "spread_home": -8.5,
+      "total": 234.5
+     }
+    },
+    "spread_home": -8.4,
+    "n_spread_books": 9,
+    "spread_flags": [],
+    "total": 234.3,
+    "divs": {
+     "poly": -0.0092
+    },
+    "max_div": 0.0092,
+    "flagged": false
+   }
+  ],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 3
+ },
+ "mlb": {
+  "rows": [],
+  "unmatched": [],
+  "odds_cached": false,
+  "n_games": 0
+ }
+}
